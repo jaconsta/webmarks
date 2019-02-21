@@ -11,7 +11,7 @@ type Site struct {
   Name string `json:"name"`
   Url string `json:"url"`
   Rate int `json:"rate"`
-  Start int `json:"start"`
+  Stars int `json:"stars"`
 }
 
 type Sites struct {
@@ -24,11 +24,18 @@ type OkResponse struct {
 
 var sites = Sites {
     Sites : []Site{
-      Site{Name: "Google", Url: "https://www.google.com/", Rate: 3, Start: 4},
-      Site{Name: "Facebook", Url: "https://www.facebook.com/", Rate: 3, Start: 2},
-      Site{Name: "Jaconsta", Url: "https://www.jaconsta.com/", Rate: 5, Start: 5},
-      Site{Name: "github", Url: "https://github.com/jaconsta", Rate: 4, Start: 3},
+      Site{Name: "Google", Url: "https://www.google.com/", Rate: 3, Stars: 4},
+      Site{Name: "Facebook", Url: "https://www.facebook.com/", Rate: 3, Stars: 2},
+      Site{Name: "Jaconsta", Url: "https://www.jaconsta.com/", Rate: 5, Stars: 5},
+      Site{Name: "github", Url: "https://github.com/jaconsta", Rate: 4, Stars: 3},
     },
+}
+
+// CORS
+func setupResponse(w *http.ResponseWriter, req *http.Request) {
+  (*w).Header().Set("Access-Control-Allow-Origin", "*")
+  (*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS") //, PUT, DELETE")
+  (*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
 func appendToSlices(site Site) {
@@ -77,13 +84,16 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func SitesHttpHandler(w http.ResponseWriter, r *http.Request) {
+  setupResponse(&w, r)
   switch r.Method {
-    case http.MethodGet:
-      getSites(w, r)
-      return
-    case http.MethodPost:
-      addPost(w, r)
-      return
+  case http.MethodOptions:
+    return
+  case http.MethodGet:
+    getSites(w, r)
+    return
+  case http.MethodPost:
+    addPost(w, r)
+    return
 
   }
 }
