@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:8080/'
+const baseUrl = 'http://localhost:8080/api/'
 
 const defaultHeaders = {
   'Content-Type': 'application/json'

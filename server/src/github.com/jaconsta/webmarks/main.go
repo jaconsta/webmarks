@@ -38,6 +38,19 @@ func setupResponse(w *http.ResponseWriter, req *http.Request) {
   (*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
+func MessageResponse(w *http.ResponseWriter, req *http.Request, message string) {
+  response := OkResponse{message}
+  addedResponse, err := json.Marshal(response)
+    if err != nil {
+      log.Printf("Could not write response")
+      http.Error(*w, "Could not write response", http.StatusInternalServerError)
+      return
+    }
+  (*w).Header().Set("Content-type", "application/json")
+  (*w).Write(addedResponse)
+
+}
+
 func appendToSlices(site Site) {
   newSites := append(sites.Sites, site)
   sites = Sites {
@@ -83,6 +96,22 @@ func addPost(w http.ResponseWriter, r *http.Request) {
   w.Write(addedResponse)
 }
 
+func GeneralResponse(w http.ResponseWriter, r *http.Request) {
+  setupResponse(&w, r)
+  if r.Method == http.MethodOptions {
+    return
+  }
+  MessageResponse(&w, r, "Welcome")
+}
+
+func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
+  setupResponse(&w, r)
+  if r.Method == http.MethodOptions {
+    return
+  }
+  MessageResponse(&w, r, "OK")
+}
+
 func SitesHttpHandler(w http.ResponseWriter, r *http.Request) {
   setupResponse(&w, r)
   switch r.Method {
@@ -94,12 +123,13 @@ func SitesHttpHandler(w http.ResponseWriter, r *http.Request) {
   case http.MethodPost:
     addPost(w, r)
     return
-
   }
 }
 
 func main() {
-  http.HandleFunc("/", SitesHttpHandler)
+  http.HandleFunc("/", GeneralResponse)
+  http.HandleFunc("/health", HealthCheckHandler)
+  http.HandleFunc("/api/sites", SitesHttpHandler)
   log.Printf("Server running on port 8080")
   log.Fatal(http.ListenAndServe(":8080", nil))
 }
