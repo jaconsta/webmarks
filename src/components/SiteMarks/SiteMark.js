@@ -10,7 +10,6 @@ const SiteMark = props => {
   const {site: {
     name,
     url,
-    rate=0,
     stars=0
   }} = props
   return (

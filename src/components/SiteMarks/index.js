@@ -1,4 +1,6 @@
 import React from 'react'
+import { chain } from 'lodash'
+
 import Grid from '@material-ui/core/Grid'
 
 import SiteMark from './SiteMark'
@@ -8,9 +10,12 @@ const SiteMarks = props => {
     <div>
       <Grid container spacing={32}>
         {
-          props.sites.map(site =>
-            <SiteMark key={site.name} site={site} />
-          )
+          chain(props.sites)
+            .sortBy(['rate', 'stars'])
+            .map(site =>
+              <SiteMark key={site.name} site={site} />
+            )
+            .value()
         }
       </Grid>
     </div>

@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 
+import validate from 'validate.js'
+import { isNil } from 'lodash'
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
@@ -16,6 +18,30 @@ const siteMarkFormDefaults = {
   rate: 0,
   stars: 1
 }
+const siteFormValidator = {
+  name: {
+    presence: { allowEmpty: false },
+    length: { minimum: 3 }
+  },
+  url: {
+    presence: true,
+    url: {
+      allowLocal: true
+    }
+  },
+  rate: {
+    numericality: true
+  },
+  stars: {
+    numericality: true
+  }
+}
+
+const parseSiteValues = fields => ({
+  ...fields,
+  rate: parseInt(fields.rate)
+})
+
 const AddSitemarkDialog = props => {
   const [formFields, setField] = useState(siteMarkFormDefaults)
   const setFieldValue = field => e => setField({ ...formFields, [field]: e.target.value })
@@ -24,15 +50,16 @@ const AddSitemarkDialog = props => {
     props.close()
   }
   const submitForm = () => {
-    if (formFields.name === '' || formFields.url === '') return
-    const site = {
-      ...formFields,
-      rate: parseInt(formFields.rate)
-    }
+    const isValid = validate(formFields, siteFormValidator)
+    if (!isNil(isValid)) return  // Missing to show errors
+    const site = parseSiteValues(formFields)
+
     props.submitSite(site)
+
     setField(siteMarkFormDefaults)
     props.close()
   }
+
   return (
     <Dialog
       open={props.open}
