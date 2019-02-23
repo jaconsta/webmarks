@@ -23,8 +23,22 @@ Builds the app for production to the `build` folder.
 
 ### Backend scripts
 
+Set GOPATH
+
 ```
 ProjectFolder=$(pwd) export GOPATH=$ProjectFolder/server/
+```
+
+Install [dep](https://github.com/golang/dep) dependency manager.
+If you use the `curl` method, add it to you `PATH`
+
+```
+export PATH=$GOPATH/bin:$PATH
+```
+
+Build and run the project
+
+```
 cd "${GOPATH}src/github.com/jaconsta/webmarks"
 go build
 ./webmarks
