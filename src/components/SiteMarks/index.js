@@ -13,7 +13,7 @@ const SiteMarks = props => {
           chain(props.sites)
             .sortBy(['rate', 'stars'])
             .map(site =>
-              <SiteMark key={site.name} site={site} />
+              <SiteMark key={site.id} site={site} />
             )
             .value()
         }

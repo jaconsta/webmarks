@@ -32,7 +32,6 @@ const Webmarks = props => {
     }
   }
 
-
   useEffect(() => {
     getSites()
   }, [])

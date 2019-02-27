@@ -15,11 +15,11 @@ const getMethod = path => {
   const url = `${baseUrl}${path}`
   return fetch(url, options)
   .then(res => res.json())
-  .catch(e => {throw Error ('Could not process the result.')})
+  .catch(e => {console.log(e); throw Error ('Could not process the result.');})
 }
 
 const postMethod = (path, body) => {
-  const url = `${baseUrl}sites`
+  const url = `${baseUrl}sites/`
   const method = 'POST'
   const headers = {
     ...defaultHeaders
@@ -36,7 +36,7 @@ const postMethod = (path, body) => {
 }
 
 export const getSites = () => {
-  const path = 'sites'
+  const path = 'sites/'
   return getMethod(path)
 }
 

@@ -47,7 +47,6 @@ func MessageResponse(w *http.ResponseWriter, req *http.Request, message string) 
 }
 
 func (siteRouter *SitesRouter) getSites(w http.ResponseWriter, r *http.Request) {
-
   sites, _ := siteRouter.mongoDb.GetAllSites()
   res, err := json.Marshal(sites)
   if err != nil {

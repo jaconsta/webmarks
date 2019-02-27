@@ -5,6 +5,7 @@ import (
   "net/http"
 
   "github.com/gorilla/mux"
+  "github.com/gorilla/handlers"
 
   "github.com/jaconsta/webmarks/models"
 )
@@ -25,15 +26,22 @@ func NewServer (db *models.MongoDb) *Server {
 
 func (s *Server) Start() {
   log.Printf("Server listening on port 8080")
-  if err := http.ListenAndServe(":8080", s.router); err != nil {
+  options := []handlers.CORSOption{
+    handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+    handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "OPTIONS"}),
+    handlers.AllowedOrigins([]string{"*"}),
+  }
+  if err := http.ListenAndServe(":8080", handlers.CORS(options...)(s.router)); err != nil {
     log.Fatal("http.ListenAndServe", err)
   }
 }
 
 func (s *Server) RegisterRoutes(){
+  corsMiddleware := mux.CORSMethodMiddleware(s.router)
   s.router.HandleFunc("/", GeneralResponse)
   NewSitesRouter(s.mongodb, s.newSubRouter("/api/sites"))
-  s.router.HandleFunc("/health", HealthCheckHandler)
+  s.router.HandleFunc("/health", HealthCheckHandler).Methods("GET", "OPTIONS")
+  s.router.Use(corsMiddleware)
 }
 
 func (s *Server) newSubRouter(path string) *mux.Router {
