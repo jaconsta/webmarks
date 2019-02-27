@@ -6,40 +6,18 @@ import (
   "log"
   "net/http"
 
-  //mgo "gopkg.in/mgo.v2"
   "github.com/gorilla/mux"
 
   "github.com/jaconsta/webmarks/models"
 )
 
-
-// While connect a DB
-// var sites = Sites {
-//     Sites : []Site{
-//       Site{Name: "Google", Url: "https://www.google.com/", Rate: 3, Stars: 4},
-//       Site{Name: "Facebook", Url: "https://www.facebook.com/", Rate: 3, Stars: 2},
-//       Site{Name: "Jaconsta", Url: "https://www.jaconsta.com/", Rate: 5, Stars: 5},
-//       Site{Name: "github", Url: "https://github.com/jaconsta", Rate: 4, Stars: 3},
-//     },
-// }
-
-// type SitesService struct {
-//     collection *mgo.Collection
-// }
-
 type SitesRouter struct {
   // sitesService SitesService
-  mongoDb models.MongoDb
+  mongoDb *models.MongoDb
 }
 
-// func NewSitesServiceHandler (dbSession *Session) *SitesRouter {
-//   collection := dbSession.GetCollection("sites")
-//   return *SitesService{collection}
-// }
-
-func  NewSitesRouter (dbSess models.MongoDb, router *mux.Router) *mux.Router {
-  // sitesCollection := dbSess.GetCollection("sites")
-  sitesRouter := SitesRouter{mongoDb: dbSess} //sitesCollection}
+func  NewSitesRouter (dbSess *models.MongoDb, router *mux.Router) *mux.Router {
+  sitesRouter := SitesRouter{mongoDb: dbSess}
 
   log.Printf("Adding routes.")
   router.HandleFunc("/", sitesRouter.getSites).Methods("GET")
@@ -68,15 +46,7 @@ func MessageResponse(w *http.ResponseWriter, req *http.Request, message string) 
 
 }
 
-// func appendToSlices(site Site) {
-//   newSites := append(sites.Sites, site)
-//   sites = Sites {
-//     Sites: newSites,
-//   }
-// }
-
 func (siteRouter *SitesRouter) getSites(w http.ResponseWriter, r *http.Request) {
-  // setupResponse(&w, r)
 
   sites, _ := siteRouter.mongoDb.GetAllSites()
   res, err := json.Marshal(sites)
@@ -90,7 +60,6 @@ func (siteRouter *SitesRouter) getSites(w http.ResponseWriter, r *http.Request) 
 }
 
 func (siteRouter *SitesRouter) addPost(w http.ResponseWriter, r *http.Request) {
-  // setupResponse(&w, r)
   body, err := ioutil.ReadAll(r.Body)
   if err != nil {
     http.Error(w, "Bad body", http.StatusInternalServerError)
@@ -103,7 +72,6 @@ func (siteRouter *SitesRouter) addPost(w http.ResponseWriter, r *http.Request) {
   }
 
   //update sites list
-  //appendToSlices(*site)
   err = siteRouter.mongoDb.AddSite(site)
   if err != nil {
     http.Error(w, "Could not add site", http.StatusBadRequest)
@@ -136,17 +104,3 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
   }
   MessageResponse(&w, r, "OK")
 }
-
-// func SitesHttpHandler(w http.ResponseWriter, r *http.Request) {
-//   setupResponse(&w, r)
-//   switch r.Method {
-//   case http.MethodOptions:
-//     return
-//   case http.MethodGet:
-//     getSites(w, r)
-//     return
-//   case http.MethodPost:
-//     addPost(w, r)
-//     return
-//   }
-// }

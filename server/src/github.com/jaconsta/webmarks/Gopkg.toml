@@ -36,3 +36,11 @@
 [[constraint]]
   name = "github.com/gorilla/mux"
   version = "1.7.0"
+
+[[constraint]]
+  name = "go.mongodb.org/mongo-driver"
+  version = "0.3.0"
+
+[[constraint]]
+  name = "github.com/mongodb/mongo-go-driver"
+  version = "0.3.0"

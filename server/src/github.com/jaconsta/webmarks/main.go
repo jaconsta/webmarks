@@ -9,30 +9,15 @@ import (
   "github.com/jaconsta/webmarks/models"
 )
 
-// type Env struct {
-//   db models.DB
-// }
-
-// https://hackernoon.com/make-yourself-a-go-web-server-with-mongodb-go-on-go-on-go-on-48f394f24e
-// https://github.com/mlabouardy/movies-restapi/blob/master/app.go#L86-L95
-
-// var db = database.MongoDb{}
-var mongoUrl = "mongodb://localhost:27017"
 func init () {
-  // log.Printf("Running setup")
-  // db, err := database.Connect("")
-  // if err == nil {
-  //   log.Fatal("Could not connect to database.")
-  // }
-  // log.Printf("Setup finished")
 }
 
 type Server struct {  // Env
   router *mux.Router
-  mongodb models.MongoDb
+  mongodb *models.MongoDb
 }
 
-func NewServer (db models.MongoDb) *Server {
+func NewServer (db *models.MongoDb) *Server {
   server := Server{router: mux.NewRouter(), mongodb: db}
   server.RegisterRoutes()
   return &server
@@ -56,7 +41,7 @@ func (s *Server) newSubRouter(path string) *mux.Router {
 }
 
 func main() {
-  dbSession, err := models.Connect(mongoUrl)
+  dbSession, err := models.Connect()
   if err != nil {
     log.Fatal("Could not connect to database")
   }
