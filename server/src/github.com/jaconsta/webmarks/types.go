@@ -1,6 +1,11 @@
 package main
 
+import (
+  "gopkg.in/mgo.v2/bson"
+)
+
 type Site struct {
+  Id bson.ObjectId `bson:"_id" json:"id"`
   Name string `json:"name"`
   Url string `json:"url"`
   Rate int `json:"rate"`
