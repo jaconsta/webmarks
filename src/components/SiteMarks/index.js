@@ -4,8 +4,14 @@ import { chain } from 'lodash'
 import Grid from '@material-ui/core/Grid'
 
 import SiteMark from './SiteMark'
+import EmptySitemark from './EmptySitemark'
 
 const SiteMarks = props => {
+
+  if (props.sites===null || props.sites.length < 1) {
+    return <EmptySitemark />
+  }
+  
   return (
     <div>
       <Grid container spacing={32}>
