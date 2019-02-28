@@ -23,15 +23,6 @@ type Sites struct {
   Sites []*Site `json:"sites"`
 }
 
-// func appendToSlices(site *Site) {
-//   site.Id = bson.NewObjectId()
-//   newSites := append(sites.Sites, (*site))
-//   sites = Sites {
-//     Sites: newSites,
-//   }
-// }
-
-
 func (db *MongoDb) GetAllSites () (Sites, error) {
   collection := db.GetCollection(sitesCollection)
   findOptions := options.Find()
