@@ -90,7 +90,7 @@ func (siteRouter *SitesRouter) addPost(w http.ResponseWriter, r *http.Request) {
   }
 
   // Response
-  response := OkResponse{"Site added"}
+  response := map[string]interface{}{"message": "Site added"}
   addedResponse, err := json.Marshal(response)
     if err != nil {
       log.Printf("Could not write response")

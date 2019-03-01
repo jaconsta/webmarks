@@ -16,6 +16,7 @@ type Site struct {
   Url string `json:"url"`
   Rate int `json:"rate"`
   Stars int `json:"stars"`
+  Category *primitive.ObjectID `json:"category"`
 }
 
 type Sites struct {

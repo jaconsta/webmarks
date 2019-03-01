@@ -1,5 +1,5 @@
 import React , { useState } from 'react'
-import { isEmpty } from 'lodash'
+import { isEmpty, chain } from 'lodash'
 
 import EmptySitemark from './EmptySitemark'
 import MarksToolbar from './MarksToolbar'
@@ -12,6 +12,15 @@ const SiteMarks = props => {
     return <EmptySitemark />
   }
 
+  let sites = chain(props.sites)
+  if (categoryGroup){
+    sites = sites.groupBy('category')
+  }
+  if (category !== '_') {
+    if (categoryGroup) sites = sites.get(category)
+    else sites = sites.filter({category})
+  }
+
   return (
     <div>
       <MarksToolbar
@@ -21,7 +30,7 @@ const SiteMarks = props => {
         groupSelected={categoryGroup}
         setGroupCategory={setCategoryGroup}
       />
-      <SiteMarkList sites={props.sites}/>
+      <SiteMarkList sites={sites.value()} categories={props.categories}/>
     </div>
   )
 }
