@@ -8,10 +8,10 @@ export const MarkTitle = styled.div`
 `
 export const MarkLink = styled.div`
   padding-left: 5px;
-  padding-top: 7px;
   a:link {
     color: black;
     text-decoration: none;
+    font-size: 0.8em;
   }
   svg {
     vertical-align: middle;

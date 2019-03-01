@@ -12,7 +12,7 @@ import AddIcon from '@material-ui/icons/Add'
 
 const styles = theme => ({
   absolute: {
-    position: 'absolute',
+    position: 'fixed',
     bottom: theme.spacing.unit * 2,
     right: theme.spacing.unit * 3,
   },
