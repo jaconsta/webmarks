@@ -13,7 +13,7 @@ const SiteMarkCategoryItems = props => {
       <Grid container spacing={32}>
         {
           chain(props.sites)
-            .sortBy([ 'stars', 'rate' ])
+            .orderBy([ 'stars', 'rate' ], [ 'desc', 'asc' ])
             .map(site =>
               <SiteMark key={site.id} site={site} />
             )

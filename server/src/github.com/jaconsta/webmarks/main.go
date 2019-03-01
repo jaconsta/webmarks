@@ -8,6 +8,7 @@ import (
   "github.com/gorilla/handlers"
 
   "github.com/jaconsta/webmarks/dao"
+  "github.com/jaconsta/webmarks/handler"
 )
 
 func init () {
@@ -38,10 +39,10 @@ func (s *Server) Start() {
 
 func (s *Server) RegisterRoutes(){
   corsMiddleware := mux.CORSMethodMiddleware(s.router)
-  s.router.HandleFunc("/", GeneralResponse)
-  NewSitesRouter(s.mongodb, s.newSubRouter("/api/sites"))
-  NewCategoriesRouter(s.mongodb, s.newSubRouter("/api/categories"))
-  s.router.HandleFunc("/health", HealthCheckHandler).Methods("GET", "OPTIONS")
+  s.router.HandleFunc("/", handler.GeneralResponse)
+  handler.NewSitesRouter(s.mongodb, s.newSubRouter("/api/sites"))
+  handler.NewCategoriesRouter(s.mongodb, s.newSubRouter("/api/categories"))
+  s.router.HandleFunc("/health", handler.HealthCheckHandler).Methods("GET", "OPTIONS")
   s.router.Use(corsMiddleware)
 }
 
