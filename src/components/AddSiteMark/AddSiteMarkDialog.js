@@ -15,6 +15,7 @@ import TextField from '@material-ui/core/TextField'
 const siteMarkFormDefaults = {
   name: '',
   url: '',
+  category: '',
   rate: 0,
   stars: 1
 }
@@ -28,6 +29,10 @@ const siteFormValidator = {
     url: {
       allowLocal: true
     }
+  },
+  category: {
+    presence: { allowEmpty: false },
+    length: { minimum: 11 } // ObjectId is 12 or 24
   },
   rate: {
     numericality: true
@@ -83,6 +88,21 @@ const AddSitemarkDialog = props => {
           fullWidth
           required
         />
+        <TextField
+          select
+          label='Category'
+          value={formFields.category}
+          onChange={setFieldValue('category')}
+          fullWidth
+        >
+        {
+          props.categories.map(({name, id}) =>
+            <MenuItem key={id} value={id}>
+              {name}
+            </MenuItem>
+          )
+        }
+        </TextField>
         <Grid container spacing={24}>
           <Grid item  xs={6}>
             <TextField

@@ -22,6 +22,7 @@ const AddSiteMark = props => {
         open={dialogOpen}
         close={closeDialog}
         submitSite={props.submitSite}
+        categories={props.categories}
       />
       <AddCategoryDialog
         open={categoryDialogOpen}

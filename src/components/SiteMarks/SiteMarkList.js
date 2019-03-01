@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 
 import SiteMark from './SiteMark'
 
-const getCategoryName = (categories, id) => find(categories, {id}, {name:'Unnamed category'}).name
+const getCategoryName = (categories, id) => find(categories, {id}, { name: 'Unnamed category' }).name
 
 const SiteMarkCategoryItems = props => {
   return (
@@ -13,7 +13,7 @@ const SiteMarkCategoryItems = props => {
       <Grid container spacing={32}>
         {
           chain(props.sites)
-            .sortBy(['rate', 'stars'])
+            .sortBy([ 'stars', 'rate' ])
             .map(site =>
               <SiteMark key={site.id} site={site} />
             )

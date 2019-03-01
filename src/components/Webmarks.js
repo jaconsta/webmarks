@@ -87,7 +87,11 @@ const Webmarks = props => {
   return(
     <div>
       <SiteMarks sites={sites} categories={categories}/>
-      <AddSiteMark submitSite={addSite} submitCategory={addCategory}/>
+      <AddSiteMark
+        submitSite={addSite}
+        submitCategory={addCategory}
+        categories={categories}
+      />
       <ErrorSnackbar showError={showError} onClose={closeError}/>
     </div>
   )
