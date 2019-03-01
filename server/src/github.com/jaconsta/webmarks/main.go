@@ -7,7 +7,7 @@ import (
   "github.com/gorilla/mux"
   "github.com/gorilla/handlers"
 
-  "github.com/jaconsta/webmarks/models"
+  "github.com/jaconsta/webmarks/dao"
 )
 
 func init () {
@@ -15,17 +15,17 @@ func init () {
 
 type Server struct {  // Env
   router *mux.Router
-  mongodb *models.MongoDb
+  mongodb *dao.MongoDb
 }
 
-func NewServer (db *models.MongoDb) *Server {
+func NewServer (db *dao.MongoDb) *Server {
   server := Server{router: mux.NewRouter(), mongodb: db}
   server.RegisterRoutes()
   return &server
 }
 
 func (s *Server) Start() {
-  log.Printf("Server listening on port 8080")
+  log.Printf("Server listening on port 8080 🚀")
   options := []handlers.CORSOption{
     handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
     handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "OPTIONS"}),
@@ -40,6 +40,7 @@ func (s *Server) RegisterRoutes(){
   corsMiddleware := mux.CORSMethodMiddleware(s.router)
   s.router.HandleFunc("/", GeneralResponse)
   NewSitesRouter(s.mongodb, s.newSubRouter("/api/sites"))
+  NewCategoriesRouter(s.mongodb, s.newSubRouter("/api/categories"))
   s.router.HandleFunc("/health", HealthCheckHandler).Methods("GET", "OPTIONS")
   s.router.Use(corsMiddleware)
 }
@@ -49,7 +50,7 @@ func (s *Server) newSubRouter(path string) *mux.Router {
 }
 
 func main() {
-  dbSession, err := models.Connect()
+  dbSession, err := dao.Connect()
   if err != nil {
     log.Fatal("Could not connect to database")
   }

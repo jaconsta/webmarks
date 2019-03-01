@@ -1,4 +1,4 @@
-package models
+package dao
 
 import (
   "context"
@@ -18,7 +18,6 @@ type Site struct {
   Stars int `json:"stars"`
 }
 
-// List Types
 type Sites struct {
   Sites []*Site `json:"sites"`
 }

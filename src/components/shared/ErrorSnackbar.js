@@ -10,12 +10,12 @@ const position = {
 const ErrorSnackbar = props => {
   return <Snackbar
     anchorOrigin={position}
-    open={props.open}
+    open={props.showError.open}
     onClose={props.onClose}
     ContentProps={{
       'aria-describedby': 'message-id',
     }}
-    message={<span id="message-id">{props.message}</span>}
+    message={<span id="message-id">{props.showError.message}</span>}
   />
 }
 

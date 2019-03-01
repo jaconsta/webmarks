@@ -52,6 +52,7 @@ const AddSiteOptionsMenu = props => {
                 <ClickAwayListener onClickAway={hideShowOptions}>
                   <MenuList>
                     <MenuItem onClick={props.showAddSiteDialog}>Sitemark</MenuItem>
+                    <MenuItem onClick={props.showCategoryDialog}>Category</MenuItem>
                     <MenuItem onClick={props.showPingDialog}>Site ping</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
