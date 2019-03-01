@@ -1,4 +1,5 @@
 import React from 'react'
+import { truncate } from 'lodash'
 
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
@@ -6,6 +7,7 @@ import PlayArrow from '@material-ui/icons/PlayArrow'
 
 import { MarkBottom, MarkLink, MarkTitle } from './styled'
 
+const truncateUrl = url => truncate(url, { length: 40 })
 const SiteMark = props => {
   const {site: {
     name,
@@ -18,7 +20,7 @@ const SiteMark = props => {
       <Paper>
         <Grid item>
         <MarkTitle>{name}</MarkTitle>
-        <MarkLink><a target="_blank" rel="noopener noreferrer" href={url}>{url} <PlayArrow /></a></MarkLink>
+        <MarkLink><a target="_blank" rel="noopener noreferrer" href={url}>{truncateUrl(url)} <PlayArrow /></a></MarkLink>
         <MarkBottom>{'⭐️'.repeat(stars)}</MarkBottom>
         </Grid>
       </Paper>
