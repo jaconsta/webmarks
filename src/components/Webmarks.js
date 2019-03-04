@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { isEmpty, isNil } from 'lodash'
 
-import SiteMarks from './SiteMarks'
 import AddSiteMark from './AddSiteMark'
+import Login from './Login'
+import SiteMarks from './SiteMarks'
 import ErrorSnackbar from './shared/ErrorSnackbar'
+
 import {
   getSites as getSitesMethod,
   addSite as addSiteMethod
@@ -18,13 +21,26 @@ const errorDefault = {
   open: false,
   message: ''
 }
+const userDefault = {
+  email: '',
+  token: '',
+  name: ''
+}
 
 const Webmarks = props => {
+  const [ userSession, setUserSession ] = useState(userDefault)
   const [ sites, setSites ] = useState(initialSites)
   const [ categories, setCategories ] = useState(initialCategories)
   const [ showError, setError ] = useState(errorDefault)
 
   const closeError = () => setError({...errorDefault})
+
+  const createUserSession = session => {
+    const sessionString = JSON.stringify(session)
+    localStorage.setItem('user', sessionString)
+    setUserSession(session)
+  }
+
   const getSites = async () => {
     try {
       const {sites: newSites} = await getSitesMethod()
@@ -49,6 +65,12 @@ const Webmarks = props => {
   }
 
   const getWebmarks = async () => {
+    if (isEmpty(userSession.token)) {
+      const user = localStorage.getItem('user')
+      if (isNil(user)) return
+      setUserSession(JSON.parse(user))
+    }
+
     Promise.all([
       getSites(),
       getCategories()
@@ -83,6 +105,9 @@ const Webmarks = props => {
     getWebmarks()
   }, [])
 
+  if (isEmpty(userSession.token)) {
+    return <Login createUserSession={createUserSession}/>
+  }
 
   return(
     <div>

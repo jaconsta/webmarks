@@ -9,6 +9,7 @@ import (
   "github.com/gorilla/mux"
 
   "github.com/jaconsta/webmarks/dao"
+  "github.com/jaconsta/webmarks/middleware"
 )
 
 type SitesRouter struct {
@@ -20,8 +21,8 @@ func  NewSitesRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router {
 
   log.Printf("Adding sites routes.")
 
-  router.HandleFunc("/", sitesRouter.getSites).Methods("GET")
-  router.HandleFunc("/", sitesRouter.addSite).Methods("POST")
+  router.HandleFunc("/", middleware.IsUserLoggedIn(sitesRouter.getSites)).Methods("GET")
+  router.HandleFunc("/", middleware.IsUserLoggedIn(sitesRouter.addSite)).Methods("POST")
 
   return router
 }

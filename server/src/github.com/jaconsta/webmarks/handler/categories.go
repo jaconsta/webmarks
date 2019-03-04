@@ -9,6 +9,7 @@ import (
   "github.com/gorilla/mux"
 
   "github.com/jaconsta/webmarks/dao"
+  "github.com/jaconsta/webmarks/middleware"
 )
 
 type CategoriesRouter struct {
@@ -25,8 +26,8 @@ func  NewCategoriesRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router 
 
   log.Printf("Adding categories routes.")
 
-  router.HandleFunc("/", sitesRouter.getCategories).Methods("GET")
-  router.HandleFunc("/", sitesRouter.addCategory).Methods("POST")
+  router.HandleFunc("/", middleware.IsUserLoggedIn(sitesRouter.getCategories)).Methods("GET")
+  router.HandleFunc("/", middleware.IsUserLoggedIn(sitesRouter.addCategory)).Methods("POST")
 
   return router
 }

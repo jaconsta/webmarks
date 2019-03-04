@@ -9,21 +9,21 @@ import (
 // CORS
 func setupResponse(w *http.ResponseWriter, req *http.Request) {
   (*w).Header().Set("Access-Control-Allow-Origin", "*")
-  (*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS") //, PUT, DELETE")
+  (*w).Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
   (*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
-func MessageResponse(w *http.ResponseWriter, req *http.Request, message string) {
-  response := map[string]interface{}{"message": message}//OkResponse{message}
-  addedResponse, err := json.Marshal(response)
-    if err != nil {
-      log.Printf("Could not write response")
-      http.Error(*w, "Could not write response", http.StatusInternalServerError)
-      return
-    }
-  (*w).Header().Set("Content-type", "application/json")
-  (*w).Write(addedResponse)
-
+func MessageResponse(w http.ResponseWriter, r *http.Request, message string) {  // *http.ResponseWriter, r *http.Request, message string) {
+  response := map[string]interface{}{"message": message}
+  jsonResponse(w, r, response) //  &w, r, response)
+  // addedResponse, err := json.Marshal(response)
+  //   if err != nil {
+  //     log.Printf("Could not write response")
+  //     http.Error(*w, "Could not write response", http.StatusInternalServerError)
+  //     return
+  //   }
+  // (*w).Header().Set("Content-type", "application/json")
+  // (*w).Write(addedResponse)
 }
 
 func jsonResponse(w http.ResponseWriter, r *http.Request, v interface{}) {
@@ -42,7 +42,7 @@ func GeneralResponse(w http.ResponseWriter, r *http.Request) {
   if r.Method == http.MethodOptions {
     return
   }
-  MessageResponse(&w, r, "Welcome")
+  MessageResponse(w, r, "Welcome")//  Need to adjust to &w, r, "Welcome")
 }
 
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,5 +50,5 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
   if r.Method == http.MethodOptions {
     return
   }
-  MessageResponse(&w, r, "OK")
+  MessageResponse(w, r, "OK")//  Need to adjust to&w, r, "OK")
 }
