@@ -41,41 +41,51 @@ const Webmarks = props => {
     setUserSession(session)
   }
 
-  const getSites = async () => {
-    try {
-      const {sites: newSites} = await getSitesMethod()
-      setSites(newSites)
-    } catch (e) {
-      setError({
-        open: true,
-        message: 'Could not load sites.'
-      })
+  const getSites = () => {
+    const f = async () => {
+      try {
+        const {sites: newSites} = await getSitesMethod()
+        setSites(newSites)
+      } catch (e) {
+        setError({
+          open: true,
+          message: 'Could not load sites.'
+        })
+      }
     }
+    f()
   }
-  const getCategories = async () => {
-    try {
-      const {categories: newCategories} = await getCategoriesMethod()
-      setCategories(newCategories)
-    } catch (e) {
-      setError({
-        open: true,
-        message: 'Could not load categories.'
-      })
+  const getCategories = () => {
+    const f = async () => {
+      try {
+        const {categories: newCategories} = await getCategoriesMethod()
+        setCategories(newCategories)
+      } catch (e) {
+        setError({
+          open: true,
+          message: 'Could not load categories.'
+        })
+      }
     }
+    f()
   }
 
-  const getWebmarks = async () => {
+  const loadUserSession = () => {
     if (isEmpty(userSession.token)) {
       const user = localStorage.getItem('user')
       if (isNil(user)) return
       setUserSession(JSON.parse(user))
+      getWebmarks()
     }
+  }
 
+  const getWebmarks = async () => {
     Promise.all([
       getSites(),
       getCategories()
     ])
   }
+
   const addSite = async site => {
     try {
       await addSiteMethod(site)
@@ -101,9 +111,9 @@ const Webmarks = props => {
     }
   }
 
-  useEffect(() => {
-    getWebmarks()
-  }, [])
+  useEffect(loadUserSession, [])
+  useEffect(getSites, [])
+  useEffect(getCategories, [])
 
   if (isEmpty(userSession.token)) {
     return <Login createUserSession={createUserSession}/>

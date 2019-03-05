@@ -18,7 +18,7 @@ type userEmail struct {
 }
 
 type tokenChallenge struct {
-  Token string `json:"token"`
+  Token string `json:"code"`
   Email string `json:"email"`
 }
 
@@ -28,7 +28,7 @@ func  NewAuthRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router {
   log.Printf("Adding categories routes.")
 
   router.HandleFunc("/register/", authRouter.registerUser).Methods("POST")
-  router.HandleFunc("/token/", authRouter.requestEmailToken).Methods("POST")
+  router.HandleFunc("/login/", authRouter.requestEmailToken).Methods("POST")
   router.HandleFunc("/password_challenge/", authRouter.promptTokenValidation).Methods("POST")
 
   return router
@@ -79,12 +79,13 @@ func (authRouter *AuthRouter) promptTokenValidation(w http.ResponseWriter, r *ht
     user, err := authRouter.mongoDb.FindUserByEmail(credentials.Email)
     if err != nil {
       http.Error(w, err.Error(), http.StatusBadRequest)
+      return
     }
     token, err := authRouter.mongoDb.FindAuthByUserAndToken(user.ID, credentials.Token)
     if err != nil {
       http.Error(w, "Could not authenticate", http.StatusInternalServerError)
+      return
     }
-    log.Printf("user %s", token.Token)
 
     // Response
     response := map[string]interface{}{"token": "Bearer xyz"}

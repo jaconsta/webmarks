@@ -101,9 +101,6 @@ const Login = props => {
     } catch (e) {
       setErrorMessage('Ohh oh! Something went wrong')
     }
-    // Remove when good
-    setUserEmail(setUserEmail.email)
-    setLoginStep(PASSWORD)
   }
   const submitLoginForm = async () => {
     const isInvalid = validate({ userEmail }, loginStepValidator)
@@ -115,8 +112,6 @@ const Login = props => {
     } catch (e) {
       setErrorMessage('Ohh oh! Something went wrong')
     }
-    // Remove when good
-    setLoginStep(PASSWORD)
   }
   const submitPasswordForm = async () => {
     const isInvalid = validate({ userEmail, userPassword }, passwordStepValidator)
@@ -133,7 +128,6 @@ const Login = props => {
     } catch (e) {
       setErrorMessage('Ohh oh! Something went wrong')
     }
-    props.createUserSession({email: userEmail, token: 'x'})
   }
   const resetAll = () => {
     setLoginStep(LOGIN)
