@@ -1,7 +1,10 @@
 package handler
 
 import (
+  "io"
+  "io/ioutil"
   "encoding/json"
+  "errors"
   "log"
   "net/http"
 )
@@ -24,6 +27,19 @@ func MessageResponse(w http.ResponseWriter, r *http.Request, message string) {  
   //   }
   // (*w).Header().Set("Content-type", "application/json")
   // (*w).Write(addedResponse)
+}
+
+func readBody(data io.Reader, v interface{}) error {
+  body, err := ioutil.ReadAll(data)
+  if err != nil {
+    errors.New("Bad body")
+  }
+  // Serialize
+  json.Unmarshal(body, &v)
+  if err != nil {
+    errors.New("Could not parse body")
+  }
+  return nil
 }
 
 func jsonResponse(w http.ResponseWriter, r *http.Request, v interface{}) {

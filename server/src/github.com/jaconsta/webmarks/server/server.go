@@ -38,6 +38,7 @@ func (s *Server) Start() {
 func (s *Server) RegisterRoutes(){
   corsMiddleware := mux.CORSMethodMiddleware(s.router)
   s.router.HandleFunc("/", handler.GeneralResponse)
+  handler.NewAuthRouter(s.mongodb, s.newSubRouter("/auth"))
   handler.NewSitesRouter(s.mongodb, s.newSubRouter("/api/sites"))
   handler.NewCategoriesRouter(s.mongodb, s.newSubRouter("/api/categories"))
   s.router.HandleFunc("/health", handler.HealthCheckHandler).Methods("GET", "OPTIONS")
