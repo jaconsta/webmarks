@@ -3,6 +3,7 @@ package handler
 import (
   "log"
   "net/http"
+  "os"
 
   jwt "github.com/dgrijalva/jwt-go"
   "github.com/gorilla/mux"
@@ -104,7 +105,7 @@ type JwtToken struct {
 func (authRouter *AuthRouter) generateUserJwtToken (user *dao.User) string {
   tokenBody := &JwtToken{UserID: user.ID, Email: user.Email}
   token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenBody)
-  signPassword := []byte("I_am_super_secret")
+  signPassword := []byte(os.Getenv("JWT_SIGN_PASSWORD"))
   signedToken, _ := token.SignedString(signPassword)
 
   return signedToken
