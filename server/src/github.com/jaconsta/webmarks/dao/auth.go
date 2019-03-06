@@ -5,6 +5,7 @@ import (
   "log"
   "time"
 
+  jwt "github.com/dgrijalva/jwt-go"
   "github.com/mongodb/mongo-go-driver/bson"
   "github.com/mongodb/mongo-go-driver/bson/primitive"
 )
@@ -15,6 +16,12 @@ type Auth struct {
   UserId *primitive.ObjectID `json:"userId"`
   Token string `json:"token"`
   ExpiresAt time.Time `json:"-"`
+}
+
+type JwtToken struct {
+  UserID *primitive.ObjectID `json:"userId"`
+  Email string `json:"email"`
+  jwt.StandardClaims
 }
 
 func (db *MongoDb) CreateToken(userId *primitive.ObjectID) (Auth, error) {

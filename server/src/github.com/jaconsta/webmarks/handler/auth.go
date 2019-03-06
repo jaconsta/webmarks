@@ -3,11 +3,11 @@ package handler
 import (
   "log"
   "net/http"
+  "strings"
   "os"
 
   jwt "github.com/dgrijalva/jwt-go"
   "github.com/gorilla/mux"
-  "github.com/mongodb/mongo-go-driver/bson/primitive"
 
   "github.com/jaconsta/webmarks/dao"
 )
@@ -93,17 +93,14 @@ func (authRouter *AuthRouter) promptTokenValidation(w http.ResponseWriter, r *ht
     jwtToken := authRouter.generateUserJwtToken(&user)
 
     // Response
-    response := map[string]interface{}{"token": jwtToken}
+    tokenParts := []string{"Bearer", jwtToken}
+    bearerToken := strings.Join(tokenParts, " ")
+    response := map[string]interface{}{"token": bearerToken}
     jsonResponse(w, r, response)
 }
 
-type JwtToken struct {
-  UserID *primitive.ObjectID `json:"userId"`
-  Email string `json:"email"`
-  jwt.StandardClaims
-}
 func (authRouter *AuthRouter) generateUserJwtToken (user *dao.User) string {
-  tokenBody := &JwtToken{UserID: user.ID, Email: user.Email}
+  tokenBody := &dao.JwtToken{UserID: user.ID, Email: user.Email}
   token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenBody)
   signPassword := []byte(os.Getenv("JWT_SIGN_PASSWORD"))
   signedToken, _ := token.SignedString(signPassword)

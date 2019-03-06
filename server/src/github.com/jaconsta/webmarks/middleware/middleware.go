@@ -1,24 +1,64 @@
 package middleware
 
 import (
+  "encoding/json"
   "log"
   "net/http"
-  "encoding/json"
+  "strings"
+  "os"
+
+  jwt "github.com/dgrijalva/jwt-go"
+
+  "github.com/jaconsta/webmarks/dao"
 )
 
 func IsUserLoggedIn(handler http.HandlerFunc) http.HandlerFunc {
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    token := r.Header.Get("Authorization")
-    if token == "" {
+    bearerToken := r.Header.Get("Authorization")
+    if bearerToken == "" {
       message := map[string]interface{}{"error": "Missing access token"}
       res, _ := json.Marshal(message)
       w.WriteHeader(http.StatusUnauthorized)
       w.Header().Set("Content-type", "application/json")
       w.Write(res)
-      // http.Error(w, res, http.StatusUnauthorized)
       return
     }
-    log.Printf("Authorization: %s ", token)
+
+    // Take the Bearer part
+    tokenSplitted := strings.Split(bearerToken, " ")
+    if len(tokenSplitted) != 2 {
+      message := map[string]interface{}{"error": "Incorrect access token"}
+      res, _ := json.Marshal(message)
+      w.WriteHeader(http.StatusForbidden)
+      w.Header().Set("Content-type", "application/json")
+      w.Write(res)
+      return
+    }
+    stringToken := tokenSplitted[1]
+    tokenClaims := &dao.JwtToken{}
+    signPassword := []byte(os.Getenv("JWT_SIGN_PASSWORD"))
+    jwtToken, err := jwt.ParseWithClaims(stringToken, tokenClaims, func(token *jwt.Token)(interface{}, error){
+      return signPassword, nil
+    })
+    if err != nil {
+      message := map[string]interface{}{"error": "Malformed access token"}
+      res, _ := json.Marshal(message)
+      w.WriteHeader(http.StatusForbidden)
+      w.Header().Add("Content-type", "application/json")
+      w.Write(res)
+      return
+    }
+    if !jwtToken.Valid {
+      message := map[string]interface{}{"error": "Invalid access token"}
+      res, _ := json.Marshal(message)
+      w.WriteHeader(http.StatusForbidden)
+      w.Header().Add("Content-type", "application/json")
+      w.Write(res)
+      return
+    }
+
+    log.Printf("Authorization: %s ", tokenClaims.Email)
+
     handler.ServeHTTP(w,r)
   })
 }
