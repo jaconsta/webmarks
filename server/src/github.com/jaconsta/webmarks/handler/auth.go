@@ -4,7 +4,9 @@ import (
   "log"
   "net/http"
 
+  jwt "github.com/dgrijalva/jwt-go"
   "github.com/gorilla/mux"
+  "github.com/mongodb/mongo-go-driver/bson/primitive"
 
   "github.com/jaconsta/webmarks/dao"
 )
@@ -81,13 +83,29 @@ func (authRouter *AuthRouter) promptTokenValidation(w http.ResponseWriter, r *ht
       http.Error(w, err.Error(), http.StatusBadRequest)
       return
     }
-    token, err := authRouter.mongoDb.FindAuthByUserAndToken(user.ID, credentials.Token)
+    _, err = authRouter.mongoDb.FindAuthByUserAndToken(user.ID, credentials.Token)
     if err != nil {
       http.Error(w, "Could not authenticate", http.StatusInternalServerError)
       return
     }
 
+    jwtToken := authRouter.generateUserJwtToken(&user)
+
     // Response
-    response := map[string]interface{}{"token": "Bearer xyz"}
+    response := map[string]interface{}{"token": jwtToken}
     jsonResponse(w, r, response)
+}
+
+type JwtToken struct {
+  UserID *primitive.ObjectID `json:"userId"`
+  Email string `json:"email"`
+  jwt.StandardClaims
+}
+func (authRouter *AuthRouter) generateUserJwtToken (user *dao.User) string {
+  tokenBody := &JwtToken{UserID: user.ID, Email: user.Email}
+  token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenBody)
+  signPassword := []byte("I_am_super_secret")
+  signedToken, _ := token.SignedString(signPassword)
+
+  return signedToken
 }
