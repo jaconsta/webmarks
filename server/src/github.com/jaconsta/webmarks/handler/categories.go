@@ -10,6 +10,8 @@ import (
 
   "github.com/jaconsta/webmarks/dao"
   "github.com/jaconsta/webmarks/middleware"
+
+  categoryModel "github.com/jaconsta/webmarks/models/category"
 )
 
 type CategoriesRouter struct {
@@ -34,7 +36,7 @@ func  NewCategoriesRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router 
 
 func (categoryRouter *CategoriesRouter) getCategories(w http.ResponseWriter, r *http.Request) {
   categoryList, _ := categoryRouter.mongoDb.GetAllCategories()
-  categories := dao.Categories{Categories: categoryList}
+  categories := categoryModel.Categories{Categories: categoryList}
   jsonResponse(w, r, categories)
 }
 
@@ -44,7 +46,7 @@ func (categoryRouter *CategoriesRouter) addCategory(w http.ResponseWriter, r *ht
     http.Error(w, "Bad body", http.StatusInternalServerError)
   }
   // Serialize
-  var category *dao.Category
+  var category *categoryModel.Category
   json.Unmarshal(body, &category)
   if err != nil {
     http.Error(w, "Could not parse body", http.StatusInternalServerError)

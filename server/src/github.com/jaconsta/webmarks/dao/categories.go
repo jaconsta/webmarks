@@ -6,26 +6,16 @@ import (
 
   "github.com/mongodb/mongo-go-driver/bson/primitive"
   "github.com/mongodb/mongo-go-driver/mongo/options"
+
+  categoryModel "github.com/jaconsta/webmarks/models/category"
+  "github.com/jaconsta/webmarks/models/collections"
 )
 
-
-type Category struct {
-  ID *primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-  Name string `json:"name"`
-  UsedByUser []*primitive.ObjectID `-"` // private
-}
-
-type Categories struct {
-  Categories []*Category `json:"categories"`
-}
-
-var categoriesCollection = "categories"
-
-func (db *MongoDb) GetAllCategories () ([]*Category, error) {
-  collection := db.GetCollection(categoriesCollection)
+func (db *MongoDb) GetAllCategories () ([]*categoryModel.Category, error) {
+  collection := db.GetCollection(collections.CategoriesCollection)
   findOptions := options.Find()
 
-  var categories []*Category
+  var categories []*categoryModel.Category
   cursor, err := collection.Find(context.TODO(), findOptions)
   if err != nil {
     log.Printf("Error getting Sites ", err)
@@ -34,7 +24,7 @@ func (db *MongoDb) GetAllCategories () ([]*Category, error) {
 
   // Decode cursor
   for cursor.Next(context.TODO()) {
-    var category Category
+    var category categoryModel.Category
     err := cursor.Decode(&category)
     if err != nil {
       log.Printf("Error decoding Sites ", err)
@@ -49,12 +39,11 @@ func (db *MongoDb) GetAllCategories () ([]*Category, error) {
   }
   cursor.Close(context.TODO())
 
-  // categories := CAtegories{Sites: siteList}
   return categories, nil
 }
 
-func (db *MongoDb) AddCategory (category *Category) (id string, err error) {
-  collection := db.GetCollection(categoriesCollection)
+func (db *MongoDb) AddCategory (category *categoryModel.Category) (id string, err error) {
+  collection := db.GetCollection(collections.CategoriesCollection)
 
   res, err := collection.InsertOne(context.TODO(), category)  // First argument is the document _id
   if err != nil {

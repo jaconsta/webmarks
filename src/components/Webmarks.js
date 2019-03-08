@@ -38,6 +38,7 @@ const Webmarks = props => {
 
   const createUserSession = session => {
     addUserToSession(session)
+    getWebmarks()
   }
 
   const getSites = () => {

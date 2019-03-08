@@ -5,42 +5,30 @@ import (
   "log"
 
   "github.com/mongodb/mongo-go-driver/bson"
-  "github.com/mongodb/mongo-go-driver/bson/primitive"
   "github.com/mongodb/mongo-go-driver/mongo/options"
+
+  siteModel "github.com/jaconsta/webmarks/models/site"
+  "github.com/jaconsta/webmarks/models/collections"
 )
-var sitesCollection = "sites"
 
-type Site struct {
-  ID *primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-  Name string `json:"name"`
-  Url string `json:"url"`
-  Rate int `json:"rate"`
-  Stars int `json:"stars"`
-  Category *primitive.ObjectID `json:"category"`
-}
-
-type Sites struct {
-  Sites []*Site `json:"sites"`
-}
-
-func (db *MongoDb) GetAllSites () (Sites, error) {
-  collection := db.GetCollection(sitesCollection)
+func (db *MongoDb) GetAllSites () (siteModel.Sites, error) {
+  collection := db.GetCollection(collections.SitesCollection)
   findOptions := options.Find()
 
-  var siteList []*Site
+  var siteList []*siteModel.Site
   cursor, err := collection.Find(context.TODO(), findOptions)
   if err != nil {
     log.Printf("Error getting Sites ", err)
-    return Sites{}, err
+    return siteModel.Sites{}, err
   }
 
   // Decode cursor
   for cursor.Next(context.TODO()) {
-    var site Site
+    var site siteModel.Site
     err := cursor.Decode(&site)
     if err != nil {
       log.Printf("Error decoding Sites ", err)
-      return Sites{}, err
+      return siteModel.Sites{}, err
     }
     siteList = append(siteList, &site)
   }
@@ -51,13 +39,13 @@ func (db *MongoDb) GetAllSites () (Sites, error) {
   }
   cursor.Close(context.TODO())
 
-  sites := Sites{Sites: siteList}
+  sites := siteModel.Sites{Sites: siteList}
   return sites, nil
 
 }
 
-func (db *MongoDb) AddSite (site *Site) (err error) {
-  collection := db.GetCollection(sitesCollection)
+func (db *MongoDb) AddSite (site *siteModel.Site) (err error) {
+  collection := db.GetCollection(collections.SitesCollection)
 
   _, err = collection.InsertOne(context.TODO(), site)  // First argument is the document _id
   if err != nil {
@@ -68,15 +56,15 @@ func (db *MongoDb) AddSite (site *Site) (err error) {
   return nil
 }
 
-func (db *MongoDb) FindOneSite (id string) (Site, error) {
-  collection := db.GetCollection(sitesCollection)
+func (db *MongoDb) FindOneSite (id string) (siteModel.Site, error) {
+  collection := db.GetCollection(collections.SitesCollection)
   filter := bson.M{"_id": id}
 
-  var site Site
+  var site siteModel.Site
   err := collection.FindOne(context.TODO(), filter).Decode(&site)
   if err != nil {
     log.Printf("Could not get Site")
-    return Site{}, err
+    return siteModel.Site{}, err
   }
   return site, nil
 }

@@ -11,6 +11,8 @@ import (
   "github.com/jaconsta/webmarks/dao"
   "github.com/jaconsta/webmarks/middleware"
   "github.com/jaconsta/webmarks/middleware/keys"
+
+  siteModel "github.com/jaconsta/webmarks/models/site"
 )
 
 type SitesRouter struct {
@@ -44,7 +46,7 @@ func (siteRouter *SitesRouter) addSite(w http.ResponseWriter, r *http.Request) {
     http.Error(w, "Bad body", http.StatusInternalServerError)
   }
   // Serialize
-  var site *dao.Site
+  var site *siteModel.Site
   json.Unmarshal(body, &site)
   if err != nil {
     http.Error(w, "Could not parse body", http.StatusInternalServerError)

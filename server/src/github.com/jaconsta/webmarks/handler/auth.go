@@ -9,6 +9,7 @@ import (
   "github.com/gorilla/mux"
 
   "github.com/jaconsta/webmarks/dao"
+  userModel "github.com/jaconsta/webmarks/models/user"
 )
 
 type AuthRouter struct {
@@ -37,7 +38,7 @@ func  NewAuthRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router {
 }
 
 func (authRouter *AuthRouter) registerUser(w http.ResponseWriter, r *http.Request) {
-  var user *dao.User
+  var user *userModel.User
   if err := readBody(r.Body, &user); err != nil {
     http.Error(w, err.Error(), http.StatusInternalServerError)
   }
@@ -96,8 +97,8 @@ func (authRouter *AuthRouter) promptTokenValidation(w http.ResponseWriter, r *ht
     jsonResponse(w, r, response)
 }
 
-func (authRouter *AuthRouter) generateUserJwtToken (user *dao.User) string {
-  tokenBody := &dao.JwtToken{UserID: user.ID, Email: user.Email}
+func (authRouter *AuthRouter) generateUserJwtToken (user *userModel.User) string {
+  tokenBody := &userModel.JwtToken{UserID: user.ID, Email: user.Email}
   token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenBody)
   signPassword := []byte(os.Getenv("JWT_SIGN_PASSWORD"))
   signedToken, _ := token.SignedString(signPassword)

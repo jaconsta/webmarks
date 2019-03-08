@@ -7,18 +7,13 @@ import (
   "github.com/mongodb/mongo-go-driver/bson"
   "github.com/mongodb/mongo-go-driver/bson/primitive"
 //  "github.com/mongodb/mongo-go-driver/mongo/options"
+
+  userModel "github.com/jaconsta/webmarks/models/user"
+  "github.com/jaconsta/webmarks/models/collections"
 )
-var usersCollection = "users"
 
-type User struct {
-  ID *primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-  Email string `json:"email"`
-  FirstName string `json:"firstName"`
-  LastName string `json:"lastName"`
-}
-
-func (db *MongoDb) RegisterUser (user *User) (id string, err error) {
-  collection := db.GetCollection(usersCollection)
+func (db *MongoDb) RegisterUser (user *userModel.User) (id string, err error) {
+  collection := db.GetCollection(collections.UsersCollection)
 
   res, err := collection.InsertOne(context.TODO(), user)
   if err != nil {
@@ -30,15 +25,15 @@ func (db *MongoDb) RegisterUser (user *User) (id string, err error) {
   return id, nil
 }
 
-func (db *MongoDb) FindUserByEmail (mail string) (User, error) {
-  collection := db.GetCollection(usersCollection)
+func (db *MongoDb) FindUserByEmail (mail string) (userModel.User, error) {
+  collection := db.GetCollection(collections.UsersCollection)
   filter := bson.M{"email": mail}
 
-  var user User
+  var user userModel.User
   err := collection.FindOne(context.TODO(), filter).Decode(&user)
   if err != nil {
     log.Printf("Could not get User")
-    return User{}, err
+    return userModel.User{}, err
   }
   return user, nil
 }

@@ -10,7 +10,7 @@ import (
 
   jwt "github.com/dgrijalva/jwt-go"
 
-  "github.com/jaconsta/webmarks/dao"
+  userModel "github.com/jaconsta/webmarks/models/user"
   "github.com/jaconsta/webmarks/middleware/keys"
 )
 
@@ -37,7 +37,7 @@ func IsUserLoggedIn(handler http.HandlerFunc) http.HandlerFunc {
       return
     }
     stringToken := tokenSplitted[1]
-    tokenClaims := &dao.JwtToken{}
+    tokenClaims := &userModel.JwtToken{}
     signPassword := []byte(os.Getenv("JWT_SIGN_PASSWORD"))
     jwtToken, err := jwt.ParseWithClaims(stringToken, tokenClaims, func(token *jwt.Token)(interface{}, error){
       return signPassword, nil
