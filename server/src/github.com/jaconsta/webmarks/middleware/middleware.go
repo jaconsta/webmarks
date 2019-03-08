@@ -1,15 +1,17 @@
 package middleware
 
 import (
+  "context"
   "encoding/json"
-  "log"
   "net/http"
   "strings"
+  "log"
   "os"
 
   jwt "github.com/dgrijalva/jwt-go"
 
   "github.com/jaconsta/webmarks/dao"
+  "github.com/jaconsta/webmarks/middleware/keys"
 )
 
 func IsUserLoggedIn(handler http.HandlerFunc) http.HandlerFunc {
@@ -57,8 +59,9 @@ func IsUserLoggedIn(handler http.HandlerFunc) http.HandlerFunc {
       return
     }
 
-    log.Printf("Authorization: %s ", tokenClaims.Email)
+    log.Printf("userId %s", tokenClaims.UserID)
+    ctx := context.WithValue(r.Context(), keys.UserId, tokenClaims.UserID)
 
-    handler.ServeHTTP(w,r)
+    handler.ServeHTTP(w,r.WithContext(ctx))
   })
 }

@@ -3,7 +3,6 @@ package handler
 import (
   "log"
   "net/http"
-  "strings"
   "os"
 
   jwt "github.com/dgrijalva/jwt-go"
@@ -93,9 +92,7 @@ func (authRouter *AuthRouter) promptTokenValidation(w http.ResponseWriter, r *ht
     jwtToken := authRouter.generateUserJwtToken(&user)
 
     // Response
-    tokenParts := []string{"Bearer", jwtToken}
-    bearerToken := strings.Join(tokenParts, " ")
-    response := map[string]interface{}{"token": bearerToken}
+    response := map[string]interface{}{"token": jwtToken}
     jsonResponse(w, r, response)
 }
 

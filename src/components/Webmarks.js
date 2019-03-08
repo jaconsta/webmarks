@@ -6,6 +6,8 @@ import Login from './Login'
 import SiteMarks from './SiteMarks'
 import ErrorSnackbar from './shared/ErrorSnackbar'
 
+import { setUserSession as addUserToSession, isUserLoggedIn } from '../services/api/userSession'
+
 import {
   getSites as getSitesMethod,
   addSite as addSiteMethod
@@ -28,7 +30,6 @@ const userDefault = {
 }
 
 const Webmarks = props => {
-  const [ userSession, setUserSession ] = useState(userDefault)
   const [ sites, setSites ] = useState(initialSites)
   const [ categories, setCategories ] = useState(initialCategories)
   const [ showError, setError ] = useState(errorDefault)
@@ -36,12 +37,11 @@ const Webmarks = props => {
   const closeError = () => setError({...errorDefault})
 
   const createUserSession = session => {
-    const sessionString = JSON.stringify(session)
-    localStorage.setItem('user', sessionString)
-    setUserSession(session)
+    addUserToSession(session)
   }
 
   const getSites = () => {
+    if (!isUserLoggedIn()) return
     const f = async () => {
       try {
         const {sites: newSites} = await getSitesMethod()
@@ -56,6 +56,7 @@ const Webmarks = props => {
     f()
   }
   const getCategories = () => {
+    if (!isUserLoggedIn()) return
     const f = async () => {
       try {
         const {categories: newCategories} = await getCategoriesMethod()
@@ -68,15 +69,6 @@ const Webmarks = props => {
       }
     }
     f()
-  }
-
-  const loadUserSession = () => {
-    if (isEmpty(userSession.token)) {
-      const user = localStorage.getItem('user')
-      if (isNil(user)) return
-      setUserSession(JSON.parse(user))
-      getWebmarks()
-    }
   }
 
   const getWebmarks = async () => {
@@ -111,11 +103,11 @@ const Webmarks = props => {
     }
   }
 
-  useEffect(loadUserSession, [])
-  useEffect(getSites, [])
-  useEffect(getCategories, [])
+  useEffect(getSites, [isUserLoggedIn()])
+  useEffect(getCategories, [isUserLoggedIn()])
 
-  if (isEmpty(userSession.token)) {
+  console.log(isUserLoggedIn())
+  if (!isUserLoggedIn()) {
     return <Login createUserSession={createUserSession}/>
   }
 

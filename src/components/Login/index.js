@@ -124,7 +124,7 @@ const Login = props => {
 
     try {
       const token = await challengeCodeUser({email: userEmail, code:userPassword})
-      props.createUserSession({email: userEmail, token})
+      props.createUserSession({email: userEmail, ...token})
     } catch (e) {
       setErrorMessage('Ohh oh! Something went wrong')
     }

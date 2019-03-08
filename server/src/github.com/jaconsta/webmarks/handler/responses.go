@@ -19,12 +19,6 @@ func setupResponse(w *http.ResponseWriter, req *http.Request) {
 func MessageResponse(w http.ResponseWriter, r *http.Request, message string) {  // *http.ResponseWriter, r *http.Request, message string) {
   response := map[string]interface{}{"message": message}
   jsonResponse(w, r, response) //  &w, r, response)
-  // addedResponse, err := json.Marshal(response)
-  //   if err != nil {
-  //     log.Printf("Could not write response")
-  //     http.Error(*w, "Could not write response", http.StatusInternalServerError)
-  //     return
-  //   }
   // (*w).Header().Set("Content-type", "application/json")
   // (*w).Write(addedResponse)
 }

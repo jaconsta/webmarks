@@ -10,6 +10,7 @@ import (
 
   "github.com/jaconsta/webmarks/dao"
   "github.com/jaconsta/webmarks/middleware"
+  "github.com/jaconsta/webmarks/middleware/keys"
 )
 
 type SitesRouter struct {
@@ -28,6 +29,11 @@ func  NewSitesRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router {
 }
 
 func (siteRouter *SitesRouter) getSites(w http.ResponseWriter, r *http.Request) {
+  userId := r.Context().Value(keys.UserId)
+  if userId == nil {
+    http.Error(w, "Missing Use id", http.StatusBadRequest)
+    return
+  }
   sites, _ := siteRouter.mongoDb.GetAllSites()
   jsonResponse(w, r, sites)
 }

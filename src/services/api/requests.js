@@ -1,12 +1,23 @@
 import { get } from 'lodash'
 import { API_URL } from '../../constants'
+import { isUserLoggedIn, getUserBearerToken } from './userSession'
 
 const baseUrl = 'http://localhost:8080/api/'
 const getApiUrl = (options) => get(options, 'url', `${API_URL}/api/`)
 
 const defaultHeaders = {
-  'Content-Type': 'application/json',
-  Authorization: 'x'
+  'Content-Type': 'application/json'
+}
+
+const getAuthorization = () => {
+  if (!isUserLoggedIn()) return {}
+  return { Authorization: getUserBearerToken() }
+}
+const buildHeaders = () => {
+  return {
+    ...defaultHeaders,
+    ...getAuthorization()
+  }
 }
 
 /**
@@ -25,9 +36,10 @@ const processResponse = (res) => {
 }
 
 export const getMethod = path => {
-  const headers = {
-    ...defaultHeaders
-  }
+  const headers = buildHeaders()
+  // {
+  //   ...defaultHeaders
+  // }
   const options = {
     headers
   }
@@ -41,9 +53,10 @@ export const getMethod = path => {
 export const postMethod = (path, body, opts) => {
   const url = `${getApiUrl(opts)}${path}`
   const method = 'POST'
-  const headers = {
-    ...defaultHeaders
-  }
+  const headers = buildHeaders()
+  // {
+  //   ...defaultHeaders
+  // }
   const options = {
     method,
     body: JSON.stringify(body),
