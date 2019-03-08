@@ -11,6 +11,7 @@ type Site struct {
   Rate int `json:"rate"`
   Stars int `json:"stars"`
   Category *primitive.ObjectID `json:"category"`
+  UserID *primitive.ObjectID `json:"-"` // private
 }
 
 type Sites struct {

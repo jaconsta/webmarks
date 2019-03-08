@@ -1,11 +1,11 @@
 import React from 'react'
-import { chain, isArray, map, find } from 'lodash'
+import { chain, isArray, map } from 'lodash'
 
 import Grid from '@material-ui/core/Grid'
 
 import SiteMark from './SiteMark'
 
-const getCategoryName = (categories, id) => find(categories, {id}, { name: 'Unnamed category' }).name
+const getCategoryName = (categories, id) => chain(categories).find({id}).get('name', 'Unnamed category').value()
 
 const SiteMarkCategoryItems = props => {
   return (

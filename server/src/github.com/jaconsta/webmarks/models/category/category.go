@@ -7,7 +7,7 @@ import (
 type Category struct {
   ID *primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
   Name string `json:"name"`
-  UsedByUser []*primitive.ObjectID `-"` // private
+  UserID *primitive.ObjectID `json:"-"` // private
 }
 
 type Categories struct {

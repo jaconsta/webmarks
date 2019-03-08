@@ -7,11 +7,13 @@ import (
   "net/http"
 
   "github.com/gorilla/mux"
+  "github.com/mongodb/mongo-go-driver/bson/primitive"
 
   "github.com/jaconsta/webmarks/dao"
   "github.com/jaconsta/webmarks/middleware"
 
   categoryModel "github.com/jaconsta/webmarks/models/category"
+  "github.com/jaconsta/webmarks/middleware/keys"
 )
 
 type CategoriesRouter struct {
@@ -35,7 +37,9 @@ func  NewCategoriesRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router 
 }
 
 func (categoryRouter *CategoriesRouter) getCategories(w http.ResponseWriter, r *http.Request) {
-  categoryList, _ := categoryRouter.mongoDb.GetAllCategories()
+  userId := r.Context().Value(keys.UserId)
+
+  categoryList, _ := categoryRouter.mongoDb.FindUserCategories(userId.(*primitive.ObjectID))
   categories := categoryModel.Categories{Categories: categoryList}
   jsonResponse(w, r, categories)
 }
@@ -52,7 +56,9 @@ func (categoryRouter *CategoriesRouter) addCategory(w http.ResponseWriter, r *ht
     http.Error(w, "Could not parse body", http.StatusInternalServerError)
   }
 
-  //update sites list
+  // Add category to DB
+  userId := r.Context().Value(keys.UserId)
+  category.UserID = userId.(*primitive.ObjectID)
   id, err := categoryRouter.mongoDb.AddCategory(category)
   if err != nil {
     http.Error(w, "Could not add site", http.StatusBadRequest)

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { isEmpty, isNil } from 'lodash'
 
 import AddSiteMark from './AddSiteMark'
 import Login from './Login'
@@ -23,11 +22,6 @@ const errorDefault = {
   open: false,
   message: ''
 }
-const userDefault = {
-  email: '',
-  token: '',
-  name: ''
-}
 
 const Webmarks = props => {
   const [ sites, setSites ] = useState(initialSites)
@@ -46,7 +40,7 @@ const Webmarks = props => {
     const f = async () => {
       try {
         const {sites: newSites} = await getSitesMethod()
-        setSites(newSites)
+        setSites(newSites || [])
       } catch (e) {
         setError({
           open: true,
@@ -61,7 +55,7 @@ const Webmarks = props => {
     const f = async () => {
       try {
         const {categories: newCategories} = await getCategoriesMethod()
-        setCategories(newCategories)
+        setCategories(newCategories || [])
       } catch (e) {
         setError({
           open: true,
@@ -107,7 +101,6 @@ const Webmarks = props => {
   useEffect(getSites, [isUserLoggedIn()])
   useEffect(getCategories, [isUserLoggedIn()])
 
-  console.log(isUserLoggedIn())
   if (!isUserLoggedIn()) {
     return <Login createUserSession={createUserSession}/>
   }

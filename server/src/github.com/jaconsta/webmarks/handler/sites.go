@@ -7,6 +7,7 @@ import (
   "net/http"
 
   "github.com/gorilla/mux"
+  "github.com/mongodb/mongo-go-driver/bson/primitive"
 
   "github.com/jaconsta/webmarks/dao"
   "github.com/jaconsta/webmarks/middleware"
@@ -36,7 +37,7 @@ func (siteRouter *SitesRouter) getSites(w http.ResponseWriter, r *http.Request) 
     http.Error(w, "Missing Use id", http.StatusBadRequest)
     return
   }
-  sites, _ := siteRouter.mongoDb.GetAllSites()
+  sites, _ := siteRouter.mongoDb.FindUserSites(userId.(*primitive.ObjectID))
   jsonResponse(w, r, sites)
 }
 
@@ -52,7 +53,9 @@ func (siteRouter *SitesRouter) addSite(w http.ResponseWriter, r *http.Request) {
     http.Error(w, "Could not parse body", http.StatusInternalServerError)
   }
 
-  //update sites list
+  //Add sites on db
+  userId := r.Context().Value(keys.UserId)
+  site.UserID = userId.(*primitive.ObjectID)
   err = siteRouter.mongoDb.AddSite(site)
   if err != nil {
     http.Error(w, "Could not add site", http.StatusBadRequest)
