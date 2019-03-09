@@ -3,6 +3,7 @@ package dao
 import (
   "context"
   "log"
+  "os"
 
   "github.com/mongodb/mongo-go-driver/mongo"
 )
@@ -11,10 +12,9 @@ type MongoDb struct {
   Client *mongo.Client
 }
 
-var MongoUrl = "mongodb://localhost:27017"
-var MongoDatabase = "webmarks"
-
 func Connect() (*MongoDb,  error) {
+  MongoUrl := os.Getenv("MONGO_URL")
+
   client, err := mongo.Connect(context.TODO(), MongoUrl)
 
   if err != nil {
@@ -36,6 +36,7 @@ func Connect() (*MongoDb,  error) {
 }
 
 func (db *MongoDb) GetCollection(collection string) *mongo.Collection {
+  MongoDatabase := os.Getenv("MONGO_DATABASE")
   return db.Client.Database(MongoDatabase).Collection(collection)
 }
 
