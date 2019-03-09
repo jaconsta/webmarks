@@ -24,6 +24,11 @@
 #   go-tests = true
 #   unused-packages = true
 
+[metadata.heroku]
+  root-package="github.com/jaconsta/webmarks"
+  go-version="go1.11.5"
+  install=["./..."]
+  ensure = "false"
 
 [prune]
   go-tests = true

@@ -5,26 +5,12 @@ import (
   "log"
   "time"
 
-  // jwt "github.com/dgrijalva/jwt-go"
   "github.com/mongodb/mongo-go-driver/bson"
   "github.com/mongodb/mongo-go-driver/bson/primitive"
 
   userModel "github.com/jaconsta/webmarks/models/user"
 )
 var authCollection = "auth"
-
-// type Auth struct {
-//   ID *primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-//   UserId *primitive.ObjectID `json:"userId"`
-//   Token string `json:"token"`
-//   ExpiresAt time.Time `json:"-"`
-// }
-//
-// type JwtToken struct {
-//   UserID *primitive.ObjectID `json:"userId"`
-//   Email string `json:"email"`
-//   jwt.StandardClaims
-// }
 
 func (db *MongoDb) CreateToken(userId *primitive.ObjectID) (userModel.Auth, error) {
   collection := db.GetCollection(authCollection)
@@ -40,8 +26,7 @@ func (db *MongoDb) CreateToken(userId *primitive.ObjectID) (userModel.Auth, erro
     log.Fatal(err)
     return userModel.Auth{}, err
   }
-  // id := res.InsertedID.(*primitive.ObjectID)
-  // auth.ID = id
+
   return auth, nil
 }
 

@@ -1,8 +1,10 @@
 package server
 
 import (
+  "fmt"
   "log"
   "net/http"
+  "os"
 
   "github.com/gorilla/mux"
   "github.com/gorilla/handlers"
@@ -24,13 +26,17 @@ func NewServer (db *dao.MongoDb) *Server {
 }
 
 func (s *Server) Start() {
-  log.Printf("Server listening on port 8080 🚀")
+  portString := os.Getenv("PORT")
+  port := fmt.Sprintf(":%v", portString)
+
+  log.Printf("Server listening on %s 🚀", portString)
   options := []handlers.CORSOption{
     handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
     handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "OPTIONS"}),
     handlers.AllowedOrigins([]string{"*"}),
   }
-  if err := http.ListenAndServe(":8080", handlers.CORS(options...)(s.router)); err != nil {
+
+  if err := http.ListenAndServe(port, handlers.CORS(options...)(s.router)); err != nil {
     log.Fatal("http.ListenAndServe", err)
   }
 }
