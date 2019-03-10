@@ -19,3 +19,4 @@ EXPOSE 8080
 
 COPY --from=builder /app ./
 ENTRYPOINT ["./app"]
+CMD [""]
