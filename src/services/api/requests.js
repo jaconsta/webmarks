@@ -2,7 +2,6 @@ import { get } from 'lodash'
 import { API_URL } from '../../constants'
 import { isUserLoggedIn, getUserBearerToken } from './userSession'
 
-const baseUrl = 'http://localhost:8080/api/'
 const getApiUrl = (options) => get(options, 'url', `${API_URL}/api/`)
 
 const defaultHeaders = {
@@ -35,16 +34,13 @@ const processResponse = (res) => {
   return res.json()
 }
 
-export const getMethod = path => {
+export const getMethod = (path, opts) => {
   const headers = buildHeaders()
-  // {
-  //   ...defaultHeaders
-  // }
   const options = {
     headers
   }
 
-  const url = `${baseUrl}${path}`
+  const url = `${getApiUrl(opts)}${path}`
   return fetch(url, options)
   .then(processResponse)
   .catch(e => {throw Error ('Could not process the result.')})
@@ -54,9 +50,6 @@ export const postMethod = (path, body, opts) => {
   const url = `${getApiUrl(opts)}${path}`
   const method = 'POST'
   const headers = buildHeaders()
-  // {
-  //   ...defaultHeaders
-  // }
   const options = {
     method,
     body: JSON.stringify(body),

@@ -5,7 +5,8 @@ import (
   "log"
   "os"
 
-  "github.com/mongodb/mongo-go-driver/mongo"
+  "go.mongodb.org/mongo-driver/mongo"
+  "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type MongoDb struct {
@@ -15,8 +16,11 @@ type MongoDb struct {
 func Connect() (*MongoDb,  error) {
   MongoUrl := os.Getenv("MONGO_URL")
 
-  client, err := mongo.Connect(context.TODO(), MongoUrl)
-
+  client, err := mongo.NewClient(options.Client().ApplyURI(MongoUrl))
+  if err != nil {
+      return nil, err
+  }
+  err = client.Connect(context.TODO())
   if err != nil {
     log.Printf("Error connecting to %s", MongoUrl)
     log.Fatal(err)
