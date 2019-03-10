@@ -2,6 +2,7 @@ package main
 
 import (
   "log"
+  "os"
 
   "github.com/joho/godotenv"
 
@@ -10,9 +11,11 @@ import (
 )
 
 func init () {
-  err := godotenv.Load()
-  if err != nil {
-    log.Fatal("Error loading .env file")
+  if environment := os.Getenv("ENVIRONMENT"); environment == "development" {
+    err := godotenv.Load()
+    if err != nil {
+      log.Fatal("Error loading .env file")
+    }
   }
 }
 
