@@ -96,7 +96,8 @@ const Login = props => {
     if (!isNil(isInvalid)) return setErrorMessage(get(isInvalid, '0'))
     try {
       await registerUser(register)
-      setUserEmail(setUserEmail.email)
+      await loginUser({email: register.email})
+      setUserEmail(register.email)
       setLoginStep(PASSWORD)
     } catch (e) {
       setErrorMessage('Ohh oh! Something went wrong')

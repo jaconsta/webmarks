@@ -3,19 +3,30 @@ package dao
 import (
   "context"
   "log"
+  "math/rand"
   "time"
 
-  "github.com/mongodb/mongo-go-driver/bson"
-  "github.com/mongodb/mongo-go-driver/bson/primitive"
+  "go.mongodb.org/mongo-driver/bson"
+  "go.mongodb.org/mongo-driver/bson/primitive"
 
   userModel "github.com/jaconsta/webmarks/models/user"
 )
 var authCollection = "auth"
 
+const codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXY1234567890"
+
+func GenerateRandomCode (n int) string {
+  code := make([]byte, n)
+  for index := range code {
+    code[index] = codeChars[rand.Intn(len(codeChars))]
+  }
+  return string(code)
+}
+
 func (db *MongoDb) CreateToken(userId *primitive.ObjectID) (userModel.Auth, error) {
   collection := db.GetCollection(authCollection)
 
-  token := "abc123"
+  token := GenerateRandomCode(6)
   expiresAt := time.Now().Add(time.Hour * 24 * 1).UTC()
 
   auth := userModel.Auth{UserId: userId, Token: token, ExpiresAt: expiresAt}

@@ -7,7 +7,7 @@ import (
   "net/http"
 
   "github.com/gorilla/mux"
-  "github.com/mongodb/mongo-go-driver/bson/primitive"
+  "go.mongodb.org/mongo-driver/bson/primitive"
 
   "github.com/jaconsta/webmarks/dao"
   "github.com/jaconsta/webmarks/middleware"

@@ -4,9 +4,9 @@ import (
   "context"
   "log"
 
-  "github.com/mongodb/mongo-go-driver/bson"
-  "github.com/mongodb/mongo-go-driver/bson/primitive"
-  "github.com/mongodb/mongo-go-driver/mongo/options"
+  "go.mongodb.org/mongo-driver/bson"
+  "go.mongodb.org/mongo-driver/bson/primitive"
+  "go.mongodb.org/mongo-driver/mongo/options"
 
   categoryModel "github.com/jaconsta/webmarks/models/category"
   "github.com/jaconsta/webmarks/models/collections"
