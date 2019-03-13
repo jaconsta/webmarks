@@ -10,6 +10,7 @@ import (
 
   "github.com/jaconsta/webmarks/dao"
   userModel "github.com/jaconsta/webmarks/models/user"
+  emailService "github.com/jaconsta/webmarks/services/email"
 )
 
 type AuthRouter struct {
@@ -63,9 +64,11 @@ func (authRouter *AuthRouter) requestEmailToken(w http.ResponseWriter, r *http.R
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
   }
-  if _, err := authRouter.mongoDb.CreateToken(user.ID); err != nil {
+  token, err := authRouter.mongoDb.CreateToken(user.ID);
+  if err != nil {
     http.Error(w, "Could not authenticate", http.StatusInternalServerError)
   }
+  go emailService.SendEmail(user.Email, token.Token)
 
   // Response
   response := map[string]interface{}{"message": "tokenCreated"}
