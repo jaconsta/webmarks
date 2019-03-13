@@ -16,7 +16,7 @@ func (db *MongoDb) GetAllSites () (siteModel.Sites, error) {
   collection := db.GetCollection(collections.SitesCollection)
   findOptions := options.Find()
 
-  var siteList []*siteModel.Site
+  siteList := []*siteModel.Site{}
   cursor, err := collection.Find(context.TODO(), findOptions)
   if err != nil {
     log.Printf("Error getting Sites ", err)
@@ -74,7 +74,7 @@ func (db *MongoDb) FindUserSites (userId *primitive.ObjectID) (siteModel.Sites, 
   collection := db.GetCollection(collections.SitesCollection)
   filter := bson.M{"userid": userId}
 
-  var siteList []*siteModel.Site
+  siteList := []*siteModel.Site{}
   cursor, err := collection.Find(context.TODO(), filter)
   if err != nil {
     log.Printf("Could not get Site")

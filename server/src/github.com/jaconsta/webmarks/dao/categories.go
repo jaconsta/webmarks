@@ -60,7 +60,7 @@ func (db *MongoDb) FindUserCategories (userId *primitive.ObjectID) ([]*categoryM
   collection := db.GetCollection(collections.CategoriesCollection)
   filter := bson.M{"userid": userId}
 
-  var categories []*categoryModel.Category
+  categories := []*categoryModel.Category{}
   cursor, err := collection.Find(context.TODO(), filter)
   if err != nil {
     log.Printf("Error getting Sites ", err)
