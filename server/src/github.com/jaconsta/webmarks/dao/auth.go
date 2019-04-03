@@ -14,11 +14,13 @@ import (
 var authCollection = "auth"
 
 const codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXY1234567890"
+var seededRand *rand.Rand = rand.New(
+  rand.NewSource(time.Now().UnixNano()))
 
 func GenerateRandomCode (n int) string {
   code := make([]byte, n)
   for index := range code {
-    code[index] = codeChars[rand.Intn(len(codeChars))]
+    code[index] = codeChars[seededRand.Intn(len(codeChars))]
   }
   return string(code)
 }
