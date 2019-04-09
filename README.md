@@ -41,7 +41,7 @@ Build and run the project
 ```
 cd "${GOPATH}src/github.com/jaconsta/webmarks"
 go build
-./webmarks
+ENVIRONMENT=development ./webmarks
 ```
 
 Sets the go path, compiles and runs the server.

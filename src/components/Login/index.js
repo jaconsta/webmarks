@@ -28,11 +28,17 @@ const styles = (theme) => ({
   virtualTab: {
     paddingLeft:'5em'
   },
+  formContainer: {
+    display: 'contents'
+  },
   actionButtons : {
     [theme.breakpoints.down('md')]: {
       width: '100%',
       marginTop: '5px',
       marginBottom: '5px'
+    },
+    [theme.breakpoints.up('lg')]: {
+      marginRight: '5px',
     }
   }
 })
@@ -91,7 +97,8 @@ const Login = props => {
   const { classes } = props
   const setValue = f => e => f(e.target.value)
   const setRegisterField = field => e => setRegister({...register, [field]: e.target.value})
-  const submitRegister = async () => {
+  const submitRegister = async e => {
+    e.preventDefault()
     const isInvalid = validate(register, registerValidator, {format: "flat"})
     if (!isNil(isInvalid)) return setErrorMessage(get(isInvalid, '0'))
     try {
@@ -103,7 +110,8 @@ const Login = props => {
       setErrorMessage('Ohh oh! Something went wrong')
     }
   }
-  const submitLoginForm = async () => {
+  const submitLoginForm = async e => {
+    e.preventDefault()
     const isInvalid = validate({ userEmail }, loginStepValidator)
     if (!isNil(isInvalid)) return setErrorMessage(get(isInvalid, 'userEmail.0'))
 
@@ -114,7 +122,8 @@ const Login = props => {
       setErrorMessage('Ohh oh! Something went wrong')
     }
   }
-  const submitPasswordForm = async () => {
+  const submitPasswordForm = async e => {
+    e.preventDefault()
     const isInvalid = validate({ userEmail, userPassword }, passwordStepValidator)
     if (!isNil(get(isInvalid, 'userEmail'))) {
       setUserPassword('')
@@ -148,21 +157,24 @@ const Login = props => {
           {
             loginStep === LOGIN  &&
               <>
-                <IconInputField
-                  placeholder= "Your email"
-                  icon={<EmailIcon />}
-                  value={userEmail}
-                  onChange={setValue(setUserEmail)}
-                />
+                <form className={classes.formContainer} onSubmit={submitLoginForm}>
+                  <IconInputField
+                    placeholder= "Your email"
+                    icon={<EmailIcon />}
+                    value={userEmail}
+                    onChange={setValue(setUserEmail)}
+                  />
 
-                <Button
-                  onClick={submitLoginForm}
-                  className={classes.actionButtons}
-                  variant="contained"
-                  color="default"
-                >
-                  Login
-                </Button>
+                  <Button
+                    onClick={submitLoginForm}
+                    className={classes.actionButtons}
+                    variant="contained"
+                    color="default"
+                    type="submit"
+                  >
+                    Login
+                  </Button>
+                </form>
                 <Button
                   onClick={() => {setLoginStep(REGISTER)}}
                   className={classes.actionButtons}
@@ -176,40 +188,39 @@ const Login = props => {
 
           {
             loginStep === REGISTER  &&
-              <>
+              <form className={classes.formContainer} onSubmit={submitRegister}>
                 <Register
                   value={Register}
                   onChange={setRegisterField}
-                  onSubmite={submitRegister}
                 />
                 <Button
-                  onClick={submitRegister}
                   className={classes.actionButtons}
                   variant="contained"
                   color="default"
+                  type="submit"
                 >
                   Submit
                 </Button>
-              </>
+              </form>
           }
 
           {
             loginStep === PASSWORD  &&
-              <>
+              <form className={classes.formContainer} onSubmit={submitPasswordForm}>
                 <InputField
                   placeholder= "Email code"
                   value={ userPassword }
                   onChange={ setValue(setUserPassword) }
                 />
                 <Button
-                  onClick={submitPasswordForm}
                   className={classes.actionButtons}
                   variant="contained"
                   color="default"
+                  type="submit"
                 >
                   Continue
                 </Button>
-              </>
+              </form>
           }
 
           {

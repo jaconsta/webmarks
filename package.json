@@ -1,6 +1,7 @@
 {
   "name": "webmarks",
   "version": "0.1.0",
+  "homepage": "https://webmarks.jaconsta.com/",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.9.2",
