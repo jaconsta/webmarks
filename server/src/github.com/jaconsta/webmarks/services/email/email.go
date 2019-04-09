@@ -26,7 +26,7 @@ func SendEmail (userEmail string, code string) error {
     "To: %s\r\n" +
     "Subject: Your access code\r\n" +
     "<h1>Hello.<h1> <p>This is your code %s.</p>",
-    emailSenderName, emailUser, userEmail, code
+    emailSenderName, emailUser, userEmail, code,
   )
 
   // Connect and send Email
