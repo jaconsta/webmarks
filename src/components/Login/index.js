@@ -94,13 +94,16 @@ const Login = props => {
   const [ register, setRegister ] = useState(registerFormFields)
   const [ userPassword, setUserPassword ] = useState('')
   const [ errorMessage, setErrorMessage ] = useState('')
+  const [ isLoginLoading, setIsLoginLoading ] = useState(false)
   const { classes } = props
   const setValue = f => e => f(e.target.value)
   const setRegisterField = field => e => setRegister({...register, [field]: e.target.value})
   const submitRegister = async e => {
     e.preventDefault()
+    if (isLoginLoading) return
     const isInvalid = validate(register, registerValidator, {format: "flat"})
     if (!isNil(isInvalid)) return setErrorMessage(get(isInvalid, '0'))
+    setIsLoginLoading(true)
     try {
       await registerUser(register)
       await loginUser({email: register.email})
@@ -108,22 +111,29 @@ const Login = props => {
       setLoginStep(PASSWORD)
     } catch (e) {
       setErrorMessage('Ohh oh! Something went wrong')
+    } finally {
+      setIsLoginLoading(false)
     }
   }
   const submitLoginForm = async e => {
     e.preventDefault()
+    if (isLoginLoading) return
     const isInvalid = validate({ userEmail }, loginStepValidator)
     if (!isNil(isInvalid)) return setErrorMessage(get(isInvalid, 'userEmail.0'))
+    setIsLoginLoading(true)
 
     try {
       await loginUser({email: userEmail})
       setLoginStep(PASSWORD)
     } catch (e) {
-      setErrorMessage('Ohh oh! Something went wrong')
+      setErrorMessage('Verify the provided email')
+    } finally {
+      setIsLoginLoading(false)
     }
   }
   const submitPasswordForm = async e => {
     e.preventDefault()
+    if (isLoginLoading) return
     const isInvalid = validate({ userEmail, userPassword }, passwordStepValidator)
     if (!isNil(get(isInvalid, 'userEmail'))) {
       setUserPassword('')
@@ -131,12 +141,15 @@ const Login = props => {
       return
     }
     if (!isNil(isInvalid)) return setErrorMessage(get(isInvalid, 'userPassword.0', 'Incorrect login form'))
+    setIsLoginLoading(true)
 
     try {
       const token = await challengeCodeUser({email: userEmail, code:userPassword})
       props.createUserSession({email: userEmail, ...token})
     } catch (e) {
       setErrorMessage('Ohh oh! Something went wrong')
+    } finally {
+      setIsLoginLoading(false)
     }
   }
   const resetAll = () => {
@@ -180,6 +193,7 @@ const Login = props => {
                   className={classes.actionButtons}
                   variant="contained"
                   color="default"
+                  disabled={isLoginLoading}
                 >
                   Register
                 </Button>
@@ -198,6 +212,7 @@ const Login = props => {
                   variant="contained"
                   color="default"
                   type="submit"
+                  disabled={isLoginLoading}
                 >
                   Submit
                 </Button>
@@ -217,6 +232,7 @@ const Login = props => {
                   variant="contained"
                   color="default"
                   type="submit"
+                  disabled={isLoginLoading}
                 >
                   Continue
                 </Button>
@@ -230,6 +246,7 @@ const Login = props => {
                 className={classes.actionButtons}
                 variant="contained"
                 color="default"
+                disabled={isLoginLoading}
               >
                 Back
               </Button>

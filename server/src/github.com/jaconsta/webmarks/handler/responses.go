@@ -36,6 +36,19 @@ func readBody(data io.Reader, v interface{}) error {
   return nil
 }
 
+
+
+func errorResponse(w http.ResponseWriter, v interface{}, code int) {
+  res, err := json.Marshal(v)
+  if err != nil {
+    log.Printf("Could not parse the response.")
+    return
+  }
+  w.WriteHeader(code)
+  w.Header().Set("Content-type", "application/json")
+  w.Write(res)
+}
+
 func jsonResponse(w http.ResponseWriter, r *http.Request, v interface{}) {
   res, err := json.Marshal(v)
   if err != nil {

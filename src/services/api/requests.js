@@ -56,6 +56,9 @@ export const postMethod = (path, body, opts) => {
     headers
   }
   return fetch(url, options)
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw Error()
+    return res.json()
+  })
   .catch(e => {throw Error ('Could not process the result.')})
 }

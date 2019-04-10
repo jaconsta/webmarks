@@ -42,11 +42,13 @@ func (authRouter *AuthRouter) registerUser(w http.ResponseWriter, r *http.Reques
   var user *userModel.User
   if err := readBody(r.Body, &user); err != nil {
     http.Error(w, err.Error(), http.StatusInternalServerError)
+    return
   }
 
   _, err := authRouter.mongoDb.RegisterUser(user)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
+    return
   }
 
   response := map[string]interface{}{"message": "userCreated"}
@@ -57,16 +59,20 @@ func (authRouter *AuthRouter) requestEmailToken(w http.ResponseWriter, r *http.R
   var email *userEmail
   if err := readBody(r.Body, &email); err != nil {
     http.Error(w, err.Error(), http.StatusInternalServerError)
+    return
   }
 
   // get user
   user, err := authRouter.mongoDb.FindUserByEmail(email.Email)
   if err != nil {
-    http.Error(w, err.Error(), http.StatusBadRequest)
+    err_msg := map[string]interface{}{"message": "The user does not exist"}
+    errorResponse(w, err_msg, http.StatusUnauthorized)
+    return
   }
   token, err := authRouter.mongoDb.CreateToken(user.ID);
   if err != nil {
     http.Error(w, "Could not authenticate", http.StatusInternalServerError)
+    return
   }
   go emailService.SendEmail(user.Email, token.Token)
 
@@ -79,6 +85,7 @@ func (authRouter *AuthRouter) promptTokenValidation(w http.ResponseWriter, r *ht
     var credentials *tokenChallenge
     if err := readBody(r.Body, &credentials); err != nil {
       http.Error(w, err.Error(), http.StatusInternalServerError)
+      return
     }
 
     // get user

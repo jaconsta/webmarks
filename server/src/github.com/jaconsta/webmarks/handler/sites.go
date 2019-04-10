@@ -45,12 +45,14 @@ func (siteRouter *SitesRouter) addSite(w http.ResponseWriter, r *http.Request) {
   body, err := ioutil.ReadAll(r.Body)
   if err != nil {
     http.Error(w, "Bad body", http.StatusInternalServerError)
+    return
   }
   // Serialize
   var site *siteModel.Site
   json.Unmarshal(body, &site)
   if err != nil {
     http.Error(w, "Could not parse body", http.StatusInternalServerError)
+    return
   }
 
   //Add sites on db
@@ -59,6 +61,7 @@ func (siteRouter *SitesRouter) addSite(w http.ResponseWriter, r *http.Request) {
   err = siteRouter.mongoDb.AddSite(site)
   if err != nil {
     http.Error(w, "Could not add site", http.StatusBadRequest)
+    return
   }
 
   // Response
