@@ -23,6 +23,10 @@ const AddSitePingDialog = props => {
     }
     setErrorMessage(initialErrorMessage)
     props.submitCategory({name})
+    handleClose()
+  }
+  const handleClose = () => {
+    setCategoryName(initialCategory)
     props.close()
   }
   const getCategoryLabel = () => errorMessage!=='' ? 'Category name' : errorMessage
@@ -48,7 +52,7 @@ const AddSitePingDialog = props => {
         <span style={{color: 'red', fontSize: '0.7em'}}>{errorMessage}</span>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.close}  color="secondary">
+        <Button onClick={handleClose}  color="secondary">
           Cancel
         </Button>
         <Button onClick={submitCategory}  color="secondary">

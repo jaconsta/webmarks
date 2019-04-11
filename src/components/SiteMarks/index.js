@@ -8,6 +8,7 @@ import SiteMarkList from './SiteMarkList'
 const SiteMarks = props => {
   const [ category, setCategory ] = useState('_')
   const [ categoryGroup, setCategoryGroup ] = useState(false)
+  const [ openNewTab, setOpenNewTab ] = useState(true)
   if (isEmpty(props.sites)) {
     return <EmptySitemark />
   }
@@ -29,8 +30,10 @@ const SiteMarks = props => {
         setCategory={setCategory}
         groupSelected={categoryGroup}
         setGroupCategory={setCategoryGroup}
+        openNewTabSelected={openNewTab}
+        setOpenNewTab={setOpenNewTab}
       />
-      <SiteMarkList sites={sites.value()} categories={props.categories}/>
+      <SiteMarkList sites={sites.value()} newTab={openNewTab} categories={props.categories}/>
     </div>
   )
 }

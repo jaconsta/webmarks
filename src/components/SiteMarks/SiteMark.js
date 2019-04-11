@@ -20,7 +20,7 @@ const SiteMark = props => {
       <Paper>
         <Grid item>
         <MarkTitle>{name}</MarkTitle>
-        <MarkLink><a target="_blank" rel="noopener noreferrer" href={url}>{truncateUrl(url)} <PlayArrow /></a></MarkLink>
+        <MarkLink><a target={props.newTab ? "_blank": ""} rel="noopener noreferrer" href={url}>{truncateUrl(url)} <PlayArrow /></a></MarkLink>
         <MarkBottom>{'⭐️'.repeat(stars)}</MarkBottom>
         </Grid>
       </Paper>

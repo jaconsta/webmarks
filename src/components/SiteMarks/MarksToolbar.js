@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { map } from 'lodash'
 
 import { withStyles } from '@material-ui/core/styles'
@@ -25,6 +26,9 @@ const MarksToolbar = props => {
   const handleGroupBy = (e) => {
     props.setGroupCategory(e.target.checked)
   }
+  const handleOpenNewTab = e => {
+    props.setOpenNewTab(e.target.checked)
+  }
 
 
   return (
@@ -50,8 +54,23 @@ const MarksToolbar = props => {
         checked={props.groupSelected}
         onChange={handleGroupBy}
       />
+      <Typography color="inherit" variant="subtitle1">Open new tab</Typography>
+      <Checkbox
+        color="default"
+        checked={props.openNewTabSelected}
+        onChange={handleOpenNewTab}
+      />
     </Toolbar>
   )
+}
+
+MarksToolbar.propTypes = {
+  value: PropTypes.string.isRequired,
+  setCategory: PropTypes.func.isRequired,
+  groupSelected: PropTypes.bool.isRequired,
+  setGroupCategory: PropTypes.func.isRequired,
+  openNewTabSelected: PropTypes.bool.isRequired,
+  setOpenNewTab: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(MarksToolbar)
