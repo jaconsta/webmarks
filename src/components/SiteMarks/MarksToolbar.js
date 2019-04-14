@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { map } from 'lodash'
+import { map, lowerCase } from 'lodash'
 
 import { withStyles } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
+import TextField from '@material-ui/core/TextField'
 import Toolbar from '@material-ui/core/Toolbar'
 import Select from '@material-ui/core/Select'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -20,6 +21,9 @@ const styles = {
 
 const MarksToolbar = props => {
   const { classes } = props
+  const handleSearchChange = e => {
+    props.handleSearchChange(lowerCase(e.target.value))
+  }
   const handleChange = (e) => {
     props.setCategory(e.target.value)
   }
@@ -33,6 +37,12 @@ const MarksToolbar = props => {
 
   return (
     <Toolbar>
+      <TextField
+        placeholder="search"
+        className={classes.categorySelect}
+        value={props.searchValue}
+        onChange={handleSearchChange}
+      />
       <Typography color="inherit" variant="subtitle1">Category</Typography>
       <Select
         className={classes.categorySelect}
@@ -70,7 +80,9 @@ MarksToolbar.propTypes = {
   groupSelected: PropTypes.bool.isRequired,
   setGroupCategory: PropTypes.func.isRequired,
   openNewTabSelected: PropTypes.bool.isRequired,
-  setOpenNewTab: PropTypes.func.isRequired
+  setOpenNewTab: PropTypes.func.isRequired,
+  searchValue: PropTypes.string.isRequired,
+  handleSearchChange: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(MarksToolbar)
