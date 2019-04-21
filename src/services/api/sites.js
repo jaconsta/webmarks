@@ -1,4 +1,4 @@
-import { getMethod, postMethod } from './requests'
+import { getMethod, postMethod, deleteMethod } from './requests'
 
 export const getSites = () => {
   const path = 'sites/'
@@ -8,4 +8,9 @@ export const getSites = () => {
 export const addSite = site => {
   const path = 'sites/'
   return postMethod(path, site)
+}
+
+export const deleteSite = id => {
+  const path = `sites/${id}/`
+  return deleteMethod(path)
 }

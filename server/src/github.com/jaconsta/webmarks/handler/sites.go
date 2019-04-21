@@ -27,6 +27,7 @@ func  NewSitesRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router {
 
   router.HandleFunc("/", middleware.IsUserLoggedIn(sitesRouter.getSites)).Methods("GET")
   router.HandleFunc("/", middleware.IsUserLoggedIn(sitesRouter.addSite)).Methods("POST")
+  router.HandleFunc("/{siteId}/", middleware.IsUserLoggedIn(sitesRouter.removeSite)).Methods("DELETE")
 
   return router
 }
@@ -74,4 +75,27 @@ func (siteRouter *SitesRouter) addSite(w http.ResponseWriter, r *http.Request) {
     }
   w.Header().Set("Content-type", "application/json")
   w.Write(addedResponse)
+}
+
+func (siteRouter *SitesRouter) removeSite(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  siteId := vars["siteId"]
+
+  log.Printf("%s", siteId)
+  userId := r.Context().Value(keys.UserId)
+  if userId == nil {
+    err_msg := map[string]interface{}{"message": "Missing user id"}
+    errorResponse(w, err_msg, http.StatusUnauthorized)
+    return
+  }
+
+  err := siteRouter.mongoDb.DeleteOneSite(siteId, userId.(*primitive.ObjectID))
+  if err != nil {
+    err_msg := map[string]interface{}{"message": err.Error()}
+    errorResponse(w, err_msg, http.StatusUnauthorized)
+    return
+  }
+  success_msg := map[string]interface{}{"message": "Site deleted"}
+  jsonResponse(w, r, success_msg)
+
 }

@@ -107,7 +107,7 @@ const Webmarks = props => {
 
   return(
     <div>
-      <SiteMarks sites={sites} categories={categories}/>
+      <SiteMarks sites={sites} categories={categories} showError={setError}/>
       <AddSiteMark
         submitSite={addSite}
         submitCategory={addCategory}

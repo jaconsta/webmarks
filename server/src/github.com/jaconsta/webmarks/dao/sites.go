@@ -1,6 +1,7 @@
 package dao
 
 import (
+  "errors"
   "context"
   "log"
 
@@ -100,4 +101,26 @@ func (db *MongoDb) FindUserSites (userId *primitive.ObjectID) (siteModel.Sites, 
 
   sites := siteModel.Sites{Sites: siteList}
   return sites, nil
+}
+
+
+func (db *MongoDb) DeleteOneSite (id string, userId *primitive.ObjectID) error {
+  siteId, _ := primitive.ObjectIDFromHex(id)
+  collection := db.GetCollection(collections.SitesCollection)
+  filter := bson.M{"_id": siteId, "userid": userId}
+
+  var site siteModel.Site
+  err := collection.FindOne(context.TODO(), filter).Decode(&site)
+  if err != nil {
+    log.Printf("%s", err.Error())
+    // Current error message: "mongo: no documents in result"
+    return errors.New("Site Not found.")
+  }
+  // if site.UserID != userId {
+  //   // Maybe just add the user.
+  //   return errors.New("Site does not belong to user")
+  // }
+
+  collection.DeleteOne(context.TODO(), filter)
+  return nil
 }

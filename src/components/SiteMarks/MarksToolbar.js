@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { map, lowerCase } from 'lodash'
 
 import { withStyles } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -70,6 +71,11 @@ const MarksToolbar = props => {
         checked={props.openNewTabSelected}
         onChange={handleOpenNewTab}
       />
+      <Button
+        onClick={props.toggleEditMode}
+      >
+        Edit mode
+      </Button>
     </Toolbar>
   )
 }
@@ -82,7 +88,8 @@ MarksToolbar.propTypes = {
   openNewTabSelected: PropTypes.bool.isRequired,
   setOpenNewTab: PropTypes.func.isRequired,
   searchValue: PropTypes.string.isRequired,
-  handleSearchChange: PropTypes.func.isRequired
+  handleSearchChange: PropTypes.func.isRequired,
+  toggleEditMode: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(MarksToolbar)

@@ -15,7 +15,7 @@ const SiteMarkCategoryItems = props => {
           chain(props.sites)
             .orderBy([ 'stars', 'rate' ], [ 'desc', 'asc' ])
             .map(site =>
-              <SiteMark key={site.id} site={site} newTab={props.newTab} />
+              <SiteMark key={site.id} site={site} newTab={props.newTab} isEditMode={props.isEditMode} showDeleteModal={props.showDeleteModal}/>
             )
             .value()
         }
@@ -27,12 +27,12 @@ const SiteMarkCategoryItems = props => {
 const SiteMarkCategoryGroup = props => (
   <div>
     <h3>{props.categoryName}</h3>
-    <SiteMarkCategoryItems sites={props.sites} newTab={props.newTab} />
+    <SiteMarkCategoryItems  showDeleteModal={props.showDeleteModal} sites={props.sites} newTab={props.newTab} />
   </div>
 )
 
 const SiteMarkList = props => {
-  if (isArray(props.sites)) return <SiteMarkCategoryItems sites={props.sites} newTab={props.newTab} />
+  if (isArray(props.sites)) return <SiteMarkCategoryItems showDeleteModal={props.showDeleteModal} isEditMode={props.isEditMode} sites={props.sites} newTab={props.newTab} />
   return (
     <>
       {
@@ -40,8 +40,10 @@ const SiteMarkList = props => {
           <SiteMarkCategoryGroup
             key={key}
             categoryName={getCategoryName(props.categories, key)}
+            showDeleteModal={props.showDeleteModal}
             sites={sites}
             newTab={props.newTab}
+            isEditMode={props.isEditMode}
           />
         ))
       }

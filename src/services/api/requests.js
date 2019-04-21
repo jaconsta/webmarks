@@ -62,3 +62,20 @@ export const postMethod = (path, body, opts) => {
   })
   .catch(e => {throw Error ('Could not process the result.')})
 }
+
+export const deleteMethod = (path, body) => {
+  const url = `${getApiUrl()}${path}`
+  const method = 'DELETE'
+  const headers = buildHeaders()
+  const options = {
+    method,
+    body: JSON.stringify(body),
+    headers
+  }
+  return fetch(url, options)
+  .then(res => {
+    if (!res.ok) throw Error()
+    return res.json()
+  })
+  .catch(e => {throw Error ('Could not process the result.')})
+}
