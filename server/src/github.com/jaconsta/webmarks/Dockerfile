@@ -12,11 +12,17 @@ RUN dep ensure --vendor-only
 COPY . ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -o /app .
 
+# Install certificates for https calls
+FROM alpine:3.6 as certificates
+
+RUN apk add -U --no-cache ca-certificates
+
 # Start over
 FROM scratch
 
 EXPOSE 8080
 
+COPY --from=certificates /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /app ./
 ENTRYPOINT ["./app"]
 CMD [""]
