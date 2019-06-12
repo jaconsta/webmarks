@@ -1,4 +1,5 @@
 import React from 'react'
+import { PropTypes } from 'prop-types'
 import { truncate } from 'lodash'
 
 import IconButton from '@material-ui/core/IconButton';
@@ -14,7 +15,7 @@ const TopEditActions = props => {
   if (!props.isEditMode) return null
   return (
     <span style={{float: 'right'}}>
-      <IconButton aria-label="Edit">
+      <IconButton aria-label="Edit" onClick={props.showEditModal}>
         <EditIcon />
       </IconButton>
 
@@ -24,6 +25,12 @@ const TopEditActions = props => {
     </span>
   )
 }
+TopEditActions.propTypes = {
+  isEditMode: PropTypes.bool.isRequired,
+  showEditModal: PropTypes.func.isRequired,
+  showDeleteModal: PropTypes.func.isRequired,
+}
+
 const truncateUrl = url => truncate(url, { length: 40 })
 const SiteMark = props => {
   const {site: {
@@ -37,7 +44,7 @@ const SiteMark = props => {
     <Grid item xs={12} sm={6} md={4}>
       <Paper>
         <Grid item>
-        <MarkTitle>{name}<TopEditActions showDeleteModal={props.showDeleteModal(id)} isEditMode={props.isEditMode} markId={id}/></MarkTitle>
+        <MarkTitle>{name}<TopEditActions showDeleteModal={props.showDeleteModal(id)} isEditMode={props.isEditMode} showEditModal={props.showEditModal(id)} markId={id}/></MarkTitle>
         <MarkLink><a target={props.newTab ? "_blank": ""} rel="noopener noreferrer" href={url}>{truncateUrl(url)} <PlayArrow /></a></MarkLink>
         <MarkBottom>{'⭐️'.repeat(stars)}</MarkBottom>
         </Grid>

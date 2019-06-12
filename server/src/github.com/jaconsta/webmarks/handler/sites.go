@@ -27,6 +27,7 @@ func  NewSitesRouter (dbSess *dao.MongoDb, router *mux.Router) *mux.Router {
 
   router.HandleFunc("/", middleware.IsUserLoggedIn(sitesRouter.getSites)).Methods("GET")
   router.HandleFunc("/", middleware.IsUserLoggedIn(sitesRouter.addSite)).Methods("POST")
+  router.HandleFunc("/{siteId}/", middleware.IsUserLoggedIn(sitesRouter.updateSite)).Methods("PUT")
   router.HandleFunc("/{siteId}/", middleware.IsUserLoggedIn(sitesRouter.removeSite)).Methods("DELETE")
 
   return router
@@ -77,11 +78,41 @@ func (siteRouter *SitesRouter) addSite(w http.ResponseWriter, r *http.Request) {
   w.Write(addedResponse)
 }
 
+func  (siteRouter *SitesRouter) updateSite(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  siteId := vars["siteId"]
+
+  body, err := ioutil.ReadAll(r.Body)
+  if err != nil {
+    http.Error(w, "Bad body", http.StatusInternalServerError)
+    return
+  }
+  // Serialize
+  var site *siteModel.Site
+  json.Unmarshal(body, &site)
+  if err != nil {
+    http.Error(w, "Could not parse body", http.StatusInternalServerError)
+    return
+  }
+
+  userId := r.Context().Value(keys.UserId)
+  if userId == nil {
+    err_msg := map[string]interface{}{"message": "Missing user id"}
+    errorResponse(w, err_msg, http.StatusUnauthorized)
+    return
+  }
+
+  site.UserID = userId.(*primitive.ObjectID)
+  err = siteRouter.mongoDb.UpdateOneSite(siteId,  userId.(*primitive.ObjectID), site)
+  success_msg := map[string]interface{}{"message": "Site Updated"}
+  jsonResponse(w, r, success_msg)
+}
+
 func (siteRouter *SitesRouter) removeSite(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
   siteId := vars["siteId"]
 
-  log.Printf("%s", siteId)
+  log.Printf("Delete %s", siteId)
   userId := r.Context().Value(keys.UserId)
   if userId == nil {
     err_msg := map[string]interface{}{"message": "Missing user id"}

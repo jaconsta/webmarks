@@ -1,4 +1,5 @@
 import React from 'react'
+import { PropTypes } from 'prop-types'
 import { chain, isArray, map } from 'lodash'
 
 import Grid from '@material-ui/core/Grid'
@@ -15,7 +16,7 @@ const SiteMarkCategoryItems = props => {
           chain(props.sites)
             .orderBy([ 'stars', 'rate' ], [ 'desc', 'asc' ])
             .map(site =>
-              <SiteMark key={site.id} site={site} newTab={props.newTab} isEditMode={props.isEditMode} showDeleteModal={props.showDeleteModal}/>
+              <SiteMark key={site.id} site={site} newTab={props.newTab} isEditMode={props.isEditMode} showDeleteModal={props.showDeleteModal} showEditModal={props.showEditModal} />
             )
             .value()
         }
@@ -27,12 +28,12 @@ const SiteMarkCategoryItems = props => {
 const SiteMarkCategoryGroup = props => (
   <div>
     <h3>{props.categoryName}</h3>
-    <SiteMarkCategoryItems  showDeleteModal={props.showDeleteModal} sites={props.sites} newTab={props.newTab} />
+    <SiteMarkCategoryItems  showDeleteModal={props.showDeleteModal} showEditModal={props.showEditModal} sites={props.sites} newTab={props.newTab} isEditMode={props.isEditMode} />
   </div>
 )
 
 const SiteMarkList = props => {
-  if (isArray(props.sites)) return <SiteMarkCategoryItems showDeleteModal={props.showDeleteModal} isEditMode={props.isEditMode} sites={props.sites} newTab={props.newTab} />
+  if (isArray(props.sites)) return <SiteMarkCategoryItems showDeleteModal={props.showDeleteModal} showEditModal={props.showEditModal} isEditMode={props.isEditMode} sites={props.sites} newTab={props.newTab} />
   return (
     <>
       {
@@ -41,6 +42,7 @@ const SiteMarkList = props => {
             key={key}
             categoryName={getCategoryName(props.categories, key)}
             showDeleteModal={props.showDeleteModal}
+            showEditModal={props.showEditModal}
             sites={sites}
             newTab={props.newTab}
             isEditMode={props.isEditMode}
@@ -49,6 +51,14 @@ const SiteMarkList = props => {
       }
     </>
   )
+}
+SiteMarkList.propTypes = {
+  sites: PropTypes.array.isRequired,
+  categories: PropTypes.array.isRequired,
+  showDeleteModal: PropTypes.func.isRequired,
+  showEditModal: PropTypes.func.isRequired,
+  newTab: PropTypes.bool.isRequired,
+  isEditMode: PropTypes.bool.isRequired,
 }
 
 export default SiteMarkList

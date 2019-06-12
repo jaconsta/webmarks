@@ -32,7 +32,7 @@ func (s *Server) Start() {
   log.Printf("Server listening on %s 🚀", portString)
   options := []handlers.CORSOption{
     handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
-    handlers.AllowedMethods([]string{"HEAD", "OPTIONS", "GET", "POST", "DELETE"}),
+    handlers.AllowedMethods([]string{"HEAD", "OPTIONS", "GET", "POST", "PUT", "DELETE"}),
     handlers.AllowedOrigins([]string{"*"}),
   }
 

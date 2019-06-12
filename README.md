@@ -36,6 +36,12 @@ If you use the `curl` method, add it to you `PATH`
 export PATH=$GOPATH/bin:$PATH
 ```
 
+Install dependencies
+
+```
+dep ensure
+```
+
 Build and run the project
 
 ```

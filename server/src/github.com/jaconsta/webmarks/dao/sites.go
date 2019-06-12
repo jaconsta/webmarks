@@ -104,6 +104,17 @@ func (db *MongoDb) FindUserSites (userId *primitive.ObjectID) (siteModel.Sites, 
 }
 
 
+func (db *MongoDb) UpdateOneSite (id string, userId *primitive.ObjectID, site *siteModel.Site) error {
+  siteId, _ := primitive.ObjectIDFromHex(id)
+  collection := db.GetCollection(collections.SitesCollection)
+  update := bson.M{"$set": site}
+
+  filter := bson.M{"_id": siteId, "userid": userId}
+  _, err := collection.UpdateOne(context.TODO(), filter, update)
+  return err
+}
+
+
 func (db *MongoDb) DeleteOneSite (id string, userId *primitive.ObjectID) error {
   siteId, _ := primitive.ObjectIDFromHex(id)
   collection := db.GetCollection(collections.SitesCollection)

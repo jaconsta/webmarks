@@ -5,7 +5,7 @@ import Login from './Login'
 import SiteMarks from './SiteMarks'
 import ErrorSnackbar from './shared/ErrorSnackbar'
 
-import { setUserSession as addUserToSession, isUserLoggedIn } from '../services/api/userSession'
+import { setUserSession as addUserToSession, isUserLoggedIn,removeUserSession } from '../services/api/userSession'
 
 import {
   getSites as getSitesMethod,
@@ -33,6 +33,12 @@ const Webmarks = props => {
   const createUserSession = session => {
     addUserToSession(session)
     getWebmarks()
+  }
+
+  const deleteUserSession = () => {
+    removeUserSession()
+    setSites([...initialSites])
+    setCategories([...initialCategories])
   }
 
   const getSites = () => {
@@ -107,7 +113,7 @@ const Webmarks = props => {
 
   return(
     <div>
-      <SiteMarks sites={sites} categories={categories} showError={setError}/>
+      <SiteMarks sites={sites} categories={categories} showError={setError} logOut={deleteUserSession}/>
       <AddSiteMark
         submitSite={addSite}
         submitCategory={addCategory}

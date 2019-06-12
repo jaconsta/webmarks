@@ -1,12 +1,14 @@
 import React , { useState } from 'react'
-import { isEmpty, chain } from 'lodash'
+import { PropTypes } from 'prop-types'
+import { isEmpty, chain, find } from 'lodash'
 
 import EmptySitemark from './EmptySitemark'
 import MarksToolbar from './MarksToolbar'
 import SiteMarkList from './SiteMarkList'
 import DeleteSiteMark from './DeleteSiteMark'
+import AddSitemarkDialog from '../AddSiteMark/AddSiteMarkDialog'
 import { filterMarksByText, exactMatch } from './filterMarks'
-import { deleteSite } from '../../services/api/sites'
+import { deleteSite, updateSite } from '../../services/api/sites'
 
 const SiteMarks = props => {
   const [ category, setCategory ] = useState('_')
@@ -16,6 +18,7 @@ const SiteMarks = props => {
   const [ isEditMode, setEditmode ] = useState(false)
   const [ isDeleteModalOpen, setIsDeleteModalOpen ] = useState(false)
   const [ selectedMark, setSelectedMark ] = useState(null)
+  const [ selectedEditMark, setSelectedEditMark ] = useState(false)
   if (isEmpty(props.sites)) {
     return <EmptySitemark />
   }
@@ -46,6 +49,24 @@ const SiteMarks = props => {
     closeDeleteModal();
   }
 
+  const showEditModal = id => () => {
+    const site = find(props.sites, { id })
+    setSelectedEditMark(site)
+  }
+  const closeEditModal = () => setSelectedEditMark(false)
+  const updateSiteMark = async values => {
+    try {
+      await updateSite(values)
+    } catch(err) {
+      props.showError({
+        open: true,
+        message: `Could not Update the site ${values.name}.`
+      })
+    }
+    closeEditModal()
+  }
+  const isEditModalOpen = () => selectedEditMark !== false
+
   return (
     <div>
       <MarksToolbar
@@ -59,6 +80,7 @@ const SiteMarks = props => {
         searchValue={filterSearch}
         handleSearchChange={setFilterSearch}
         toggleEditMode={toggleEditMode}
+        logOut={props.logOut}
       />
       <SiteMarkList
         sites={sites.value()}
@@ -66,10 +88,21 @@ const SiteMarks = props => {
         categories={props.categories}
         isEditMode={isEditMode}
         showDeleteModal={showDeleteModal}
+        showEditModal={showEditModal}
       />
       <DeleteSiteMark markId={selectedMark} open={isDeleteModalOpen} close={closeDeleteModal} confirmDelete={deleteMark}/>
+      { selectedEditMark &&
+        <AddSitemarkDialog close={closeEditModal} submitSite={updateSiteMark} open={isEditModalOpen()} categories={props.categories} formValues={selectedEditMark || undefined} />
+      }
     </div>
   )
+}
+
+SiteMarks.propTypes = {
+  categories: PropTypes.array,
+  sites: PropTypes.array,
+  showError: PropTypes.func,
+  logOut: PropTypes.func,
 }
 
 export default SiteMarks

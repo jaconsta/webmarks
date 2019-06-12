@@ -1,13 +1,17 @@
-import { getMethod, postMethod, deleteMethod } from './requests'
+import { getMethod, postMethod, deleteMethod, updateMethod } from './requests'
 
+const BASE_PATH = 'sites/'
 export const getSites = () => {
-  const path = 'sites/'
-  return getMethod(path)
+  return getMethod(BASE_PATH)
 }
 
 export const addSite = site => {
-  const path = 'sites/'
-  return postMethod(path, site)
+  return postMethod(BASE_PATH, site)
+}
+
+export const updateSite = site => {
+  const path = `${BASE_PATH}${site.id}/`
+  return updateMethod(path, site)
 }
 
 export const deleteSite = id => {

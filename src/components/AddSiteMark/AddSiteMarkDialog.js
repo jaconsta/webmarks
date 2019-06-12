@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import { PropTypes } from 'prop-types'
 
 import validate from 'validate.js'
 import { isNil } from 'lodash'
@@ -48,7 +49,7 @@ const parseSiteValues = fields => ({
 })
 
 const AddSitemarkDialog = props => {
-  const [formFields, setField] = useState(siteMarkFormDefaults)
+  const [formFields, setField] = useState(props.formValues)
   const setFieldValue = field => e => setField({ ...formFields, [field]: e.target.value })
   const handleClose = () => {
     setField(siteMarkFormDefaults)
@@ -142,6 +143,18 @@ const AddSitemarkDialog = props => {
       </DialogActions>
     </Dialog>
   )
+}
+
+AddSitemarkDialog.propTypes = {
+  close: PropTypes.func,
+  submitSite: PropTypes.func,
+  open: PropTypes.bool,
+  categories: PropTypes.array,
+  formValues: PropTypes.object
+}
+
+AddSitemarkDialog.defaultProps = {
+  formValues: { ...siteMarkFormDefaults },
 }
 
 export default AddSitemarkDialog

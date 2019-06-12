@@ -12,6 +12,10 @@ export const getUserToken = () => {
   return token
 }
 
+export const removeUserSession = () => {
+  localStorage.removeItem('userSession')
+}
+
 export const getUserBearerToken = () => {
   return `Bearer ${getUserToken()}`
 }

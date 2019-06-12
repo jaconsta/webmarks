@@ -76,6 +76,11 @@ const MarksToolbar = props => {
       >
         Edit mode
       </Button>
+      <Button
+        onClick={props.logOut}
+      >
+        logout
+      </Button>
     </Toolbar>
   )
 }
@@ -89,7 +94,8 @@ MarksToolbar.propTypes = {
   setOpenNewTab: PropTypes.func.isRequired,
   searchValue: PropTypes.string.isRequired,
   handleSearchChange: PropTypes.func.isRequired,
-  toggleEditMode: PropTypes.func.isRequired
+  toggleEditMode: PropTypes.func.isRequired,
+  logOut: PropTypes.func.isRequired,  
 }
 
 export default withStyles(styles)(MarksToolbar)
