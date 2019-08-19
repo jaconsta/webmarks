@@ -4,6 +4,7 @@ import AddSiteMark from './AddSiteMark'
 import Login from './Login'
 import SiteMarks from './SiteMarks'
 import ErrorSnackbar from './shared/ErrorSnackbar'
+import Landing from './Landing'
 
 import { setUserSession as addUserToSession, isUserLoggedIn,removeUserSession } from '../services/api/userSession'
 
@@ -108,7 +109,7 @@ const Webmarks = props => {
   useEffect(getCategories, [isUserLoggedIn()])
 
   if (!isUserLoggedIn()) {
-    return <Login createUserSession={createUserSession}/>
+    return <div><Login createUserSession={createUserSession}/><Landing /></div>
   }
 
   return(
