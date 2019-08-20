@@ -7,6 +7,9 @@ import (
   "fmt"
   "math/rand"
   "time"
+  "crypto/md5"
+  "encoding/hex"
+  "os"
 
   "go.mongodb.org/mongo-driver/bson"
   "go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,27 +30,38 @@ func GenerateRandomCode (n int) string {
   return string(code)
 }
 
-func (db *MongoDb) CreateToken(userId *primitive.ObjectID) (userModel.Auth, error) {
+func generateHash (secret string) string {
+  hasher := md5.New()
+  hasher.Write([]byte(secret))
+  return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func (db *MongoDb) CreateToken(userId *primitive.ObjectID) (string, error) {
   collection := db.GetCollection(authCollection)
 
   token := GenerateRandomCode(6)
+  if environment := os.Getenv("ENVIRONMENT"); environment == "development" {
+    log.Printf("Development token %s", token)
+  }
+  secret_token := generateHash(token)
   expiresAt := time.Now().Add(time.Hour * 24 * 1).UTC()
 
-  auth := userModel.Auth{UserId: userId, Token: token, ExpiresAt: expiresAt}
+  auth := userModel.Auth{UserId: userId, Token: secret_token, ExpiresAt: expiresAt}
 
   _, err := collection.InsertOne(context.TODO(), auth)
   if err != nil {
     log.Printf("Could not insert document")
     log.Fatal(err)
-    return userModel.Auth{}, err
+    return "", err
   }
 
-  return auth, nil
+  return token, nil
 }
 
 func (db *MongoDb) FindAuthByUserAndToken (userId *primitive.ObjectID, token string) (userModel.Auth, error) {
   collection := db.GetCollection(authCollection)
-  filter := bson.M{"token": token, "userid": userId}
+  secret_token := generateHash(token)
+  filter := bson.M{"token": secret_token, "userid": userId}
 
   var auth userModel.Auth
   err := collection.FindOne(context.TODO(), filter).Decode(&auth)

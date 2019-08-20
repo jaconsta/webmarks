@@ -81,7 +81,7 @@ func (authRouter *AuthRouter) requestEmailToken(w http.ResponseWriter, r *http.R
     http.Error(w, "Could not authenticate", http.StatusInternalServerError)
     return
   }
-  go emailService.SendEmail(user.Email, token.Token)
+  go emailService.SendEmail(user.Email, token)
 
   // Response
   response := map[string]interface{}{"message": "tokenCreated"}
