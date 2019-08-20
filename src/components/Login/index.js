@@ -46,10 +46,13 @@ const styles = (theme) => ({
 const LOGIN = 'LOGIN'
 const REGISTER = 'REGISTER'
 const PASSWORD = 'PASSWORD'
+const PASSWORD_REPEAT = 'PARSSWORD_REPEAT'
 const titles = {
   [ LOGIN ]: 'Login',
   [ REGISTER ]: 'Register',
-  [ PASSWORD ]: 'Code sent to email'
+  [ PASSWORD ]: 'Code sent to email',
+  [ PASSWORD_REPEAT ]: 'Type the password you received for the day',
+
 }
 const getTitle = step => titles[step]
 const registerFormFields = {
@@ -123,8 +126,8 @@ const Login = props => {
     setIsLoginLoading(true)
 
     try {
-      await loginUser({email: userEmail})
-      setLoginStep(PASSWORD)
+      const { message } = await loginUser({email: userEmail})
+      setLoginStep(message === 'tokenExists' ? PASSWORD_REPEAT : PASSWORD)
     } catch (e) {
       setErrorMessage('Verify the provided email')
     } finally {
@@ -220,7 +223,7 @@ const Login = props => {
           }
 
           {
-            loginStep === PASSWORD  &&
+            (loginStep === PASSWORD || loginStep === PASSWORD_REPEAT) &&
               <form className={classes.formContainer} onSubmit={submitPasswordForm}>
                 <InputField
                   placeholder= "Email code"

@@ -69,6 +69,13 @@ func (authRouter *AuthRouter) requestEmailToken(w http.ResponseWriter, r *http.R
     errorResponse(w, err_msg, http.StatusUnauthorized)
     return
   }
+  // Don't send the token if it has been issued.
+  if err = authRouter.mongoDb.UserTokenExists(user.ID); err != nil {
+    response := map[string]interface{}{"message": "tokenExists"}
+    jsonResponse(w, r, response)
+    return
+  }
+
   token, err := authRouter.mongoDb.CreateToken(user.ID);
   if err != nil {
     http.Error(w, "Could not authenticate", http.StatusInternalServerError)

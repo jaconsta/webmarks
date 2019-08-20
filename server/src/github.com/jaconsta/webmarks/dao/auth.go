@@ -2,7 +2,9 @@ package dao
 
 import (
   "context"
+  "errors"
   "log"
+  "fmt"
   "math/rand"
   "time"
 
@@ -54,4 +56,24 @@ func (db *MongoDb) FindAuthByUserAndToken (userId *primitive.ObjectID, token str
     return userModel.Auth{}, err
   }
   return auth, nil
+}
+
+func (db *MongoDb) UserTokenExists (userId *primitive.ObjectID) (error) {
+  collection := db.GetCollection(authCollection)
+  now := time.Now()
+
+  filter := bson.M{"userid": userId, "expiresat": bson.M{"$gte": now}}
+
+  var auth userModel.Auth
+  err := collection.FindOne(context.TODO(), filter).Decode(&auth)
+  if err == nil {
+    // There is a document in the result
+    return errors.New("User has a valid Token.")
+  }
+  if fmt.Sprintf("%s", err) == "mongo: no documents in result" {
+    // There are no valid tokens
+    return nil
+  }
+
+  return err
 }
