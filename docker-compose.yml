@@ -1,0 +1,13 @@
+version: '3'
+services:
+  client:
+      build: ./client/
+      image: jaconsta/webmarks_client:latest
+      command: "yarn start | cat"
+      ports:
+        - "3000:3000"
+        - "35729:35729"
+      volumes:
+        - ./client/src:/app/src/
+        - ./client/package.json:/app/package.json
+        - ./client/yarn.lock:/app/yarn.lock
